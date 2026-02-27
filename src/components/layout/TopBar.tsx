@@ -4,8 +4,10 @@ import { AnimatePresence, motion } from '@/components/motion'
 import { Button } from '@/components/ui/button'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
+import { useNavigation } from './NavigationContext'
 
 export function TopBar() {
+  const { navMode } = useNavigation()
   const [isDark, setIsDark] = useState(
     document.documentElement.classList.contains('dark')
   )
@@ -15,10 +17,18 @@ export function TopBar() {
     document.documentElement.classList.toggle('dark')
   }
 
+  // Don't show SidebarTrigger in contextual mode (no SidebarProvider)
+  // Don't show in dual-sidebar mode (trigger moves to primary sidebar)
+  const showSidebarTrigger = navMode !== 'contextual' && navMode !== 'dual-sidebar'
+
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-      <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-2 h-4" />
+      {showSidebarTrigger && (
+        <>
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+        </>
+      )}
       <div className="flex-1" />
       <Button variant="ghost" size="icon" onClick={toggleTheme}>
         <AnimatePresence mode="wait">

@@ -1,13 +1,5 @@
-import {
-  LayoutDashboard,
-  Megaphone,
-  Users,
-  FileText,
-  BarChart3,
-  Settings,
-  ChevronUp,
-  Building2,
-} from 'lucide-react'
+import { ChevronUp, Building2, PanelLeftClose, PanelLeft, Moon, Sun } from 'lucide-react'
+import { useState } from 'react'
 
 import {
   Sidebar,
@@ -20,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import {
   DropdownMenu,
@@ -29,45 +22,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
-const navItems = [
-  {
-    title: 'Dashboard',
-    icon: LayoutDashboard,
-    url: '#',
-    isActive: true,
-  },
-  {
-    title: 'Campaigns',
-    icon: Megaphone,
-    url: '#',
-  },
-  {
-    title: 'Audiences',
-    icon: Users,
-    url: '#',
-  },
-  {
-    title: 'Forms',
-    icon: FileText,
-    url: '#',
-  },
-  {
-    title: 'Reports',
-    icon: BarChart3,
-    url: '#',
-  },
-]
-
-const settingsItems = [
-  {
-    title: 'Settings',
-    icon: Settings,
-    url: '#',
-  },
-]
+import { SidebarNavItem } from './SidebarNavItem'
+import { navigationItems, settingsItem } from './navigation'
+import { useNavigation } from './NavigationContext'
 
 export function AppSidebar() {
+  const { navMode } = useNavigation()
+  const { toggleSidebar, state } = useSidebar()
+  const [isDark, setIsDark] = useState(
+    document.documentElement.classList.contains('dark')
+  )
+
+  const toggleTheme = () => {
+    setIsDark(!isDark)
+    document.documentElement.classList.toggle('dark')
+  }
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -125,32 +95,48 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={item.isActive} tooltip={item.title}>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              {navigationItems.map((item) => (
+                <SidebarNavItem key={`${navMode}-${item.id}`} item={item} />
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={toggleTheme}
+                  tooltip={isDark ? 'Light mode' : 'Dark mode'}
+                >
+                  {isDark ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                  <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={toggleSidebar}
+                  tooltip={state === 'collapsed' ? 'Expand sidebar' : 'Collapse sidebar'}
+                >
+                  {state === 'collapsed' ? (
+                    <PanelLeft className="h-4 w-4" />
+                  ) : (
+                    <PanelLeftClose className="h-4 w-4" />
+                  )}
+                  <span>{state === 'collapsed' ? 'Expand' : 'Collapse'}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          {settingsItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          <SidebarNavItem key={`${navMode}-settings`} item={settingsItem} />
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
