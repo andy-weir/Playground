@@ -1,12 +1,12 @@
 import { Toaster } from '@/components/ui/sonner'
 import { AppLayout } from '@/components/layout'
-import Home from '@/pages/Home'
+import GdprConsentDemo from '@/pages/GdprConsentDemo'
 
 function App() {
   return (
     <>
       <AppLayout>
-        <Home />
+        <GdprConsentDemo />
       </AppLayout>
       <Toaster position="bottom-right" richColors />
     </>

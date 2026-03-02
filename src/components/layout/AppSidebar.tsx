@@ -7,6 +7,8 @@ import {
   Settings,
   ChevronUp,
   Building2,
+  FlaskConical,
+  Shield,
 } from 'lucide-react'
 
 import {
@@ -15,6 +17,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -35,7 +38,6 @@ const navItems = [
     title: 'Dashboard',
     icon: LayoutDashboard,
     url: '#',
-    isActive: true,
   },
   {
     title: 'Campaigns',
@@ -56,6 +58,15 @@ const navItems = [
     title: 'Reports',
     icon: BarChart3,
     url: '#',
+  },
+]
+
+const demoItems = [
+  {
+    title: 'GDPR Email Consent',
+    icon: Shield,
+    url: '#',
+    isActive: true,
   },
 ]
 
@@ -126,6 +137,26 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild tooltip={item.title}>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            <FlaskConical className="mr-2 size-4" />
+            Demos
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {demoItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={item.isActive} tooltip={item.title}>
                     <a href={item.url}>
