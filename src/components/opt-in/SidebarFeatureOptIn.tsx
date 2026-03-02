@@ -38,18 +38,22 @@ export function SidebarFeatureOptIn({ featureId }: SidebarFeatureOptInProps) {
   // Feature is ENABLED - show switch back button with feedback icons
   if (isEnabled) {
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 group-data-[collapsible=icon]:justify-center">
         <button
           onClick={handleSwitchBack}
           className={cn(
             "flex flex-1 items-center gap-2 rounded-md p-2 text-left text-sm outline-none",
             "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-            "focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+            "focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+            // Collapsed state: fixed size, no flex-1
+            "group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center"
           )}
+          title="Switch back to classic"
         >
-          <Undo2 className="h-4 w-4" />
-          <span className="truncate">Switch back to classic</span>
+          <Undo2 className="h-4 w-4 shrink-0" />
+          <span className="truncate group-data-[collapsible=icon]:hidden">Switch back to classic</span>
         </button>
+        {/* Hide feedback buttons when collapsed */}
         {!feedbackGiven && (
           <>
             <button
@@ -57,7 +61,8 @@ export function SidebarFeatureOptIn({ featureId }: SidebarFeatureOptInProps) {
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-md outline-none",
                 "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                "focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+                "focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                "group-data-[collapsible=icon]:hidden"
               )}
               title="I like this"
             >
@@ -68,7 +73,8 @@ export function SidebarFeatureOptIn({ featureId }: SidebarFeatureOptInProps) {
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-md outline-none",
                 "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                "focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+                "focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                "group-data-[collapsible=icon]:hidden"
               )}
               title="Not for me"
             >
@@ -80,6 +86,7 @@ export function SidebarFeatureOptIn({ featureId }: SidebarFeatureOptInProps) {
           <div
             className={cn(
               "flex h-8 w-8 items-center justify-center rounded-md",
+              "group-data-[collapsible=icon]:hidden",
               feedbackGiven === 'up'
                 ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
                 : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
@@ -105,11 +112,14 @@ export function SidebarFeatureOptIn({ featureId }: SidebarFeatureOptInProps) {
         "flex w-full items-center gap-2 rounded-md p-2 text-left text-sm outline-none",
         "bg-primary/10 border border-primary/20",
         "hover:bg-primary/15 hover:border-primary/30",
-        "focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+        "focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+        // Collapsed state: fixed size icon button
+        "group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center"
       )}
+      title="Try New Navigation"
     >
-      <Sparkles className="h-4 w-4 text-primary" />
-      <span className="flex-1 truncate font-medium">Try New Navigation</span>
+      <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+      <span className="flex-1 truncate font-medium group-data-[collapsible=icon]:hidden">Try New Navigation</span>
     </button>
   )
 }
