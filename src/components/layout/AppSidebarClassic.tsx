@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { SidebarFeatureOptIn } from '@/components/opt-in'
 
 const navItems = [
   {
@@ -141,6 +142,9 @@ export function AppSidebarClassic() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarFeatureOptIn featureId="newNavigation" />
+          </SidebarMenuItem>
           {settingsItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild tooltip={item.title}>

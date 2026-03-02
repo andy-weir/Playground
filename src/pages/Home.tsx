@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/dialog'
 import { toast } from '@/components/ui/sonner'
 import { PageHeader } from '@/components/layout'
-import { OptInBanner } from '@/components/opt-in'
 
 const features = [
   {
@@ -53,8 +52,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-6">
-      <OptInBanner featureId="newNavigation" />
-
       <PageHeader
         title="Dashboard"
         breadcrumbs={[
