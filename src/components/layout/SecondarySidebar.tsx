@@ -1,10 +1,10 @@
 import { useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { useNavigation } from './NavigationContext'
-import { allNavigationItems } from './navigation'
+import { allNavigationItems, projectNavigationItems, projectSettingsItem } from './navigation'
 
 export function SecondarySidebar() {
-  const { navMode, activeSection, hoveredSection, activeSubItem, navigateTo, setHoveredSection } = useNavigation()
+  const { navMode, activeSection, hoveredSection, activeSubItem, activeProject, navigateTo, setHoveredSection } = useNavigation()
   const timeoutRef = useRef<number | null>(null)
 
   // Clear timeout on unmount
@@ -18,9 +18,14 @@ export function SecondarySidebar() {
 
   if (navMode !== 'dual-sidebar') return null
 
+  // Use project navigation items when in project mode
+  const navigationItems = activeProject
+    ? [...projectNavigationItems, projectSettingsItem]
+    : allNavigationItems
+
   // Show hovered section's items, or fall back to active section
   const displaySection = hoveredSection || activeSection
-  const sectionData = allNavigationItems.find(item => item.id === displaySection)
+  const sectionData = navigationItems.find(item => item.id === displaySection)
 
   const handleMouseEnter = () => {
     // Clear any pending timeout when entering the secondary sidebar

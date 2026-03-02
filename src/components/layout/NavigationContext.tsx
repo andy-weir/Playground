@@ -9,16 +9,24 @@ import {
 
 export type NavMode = 'standard' | 'dropdown' | 'global' | 'dual-sidebar' | 'contextual'
 
+export interface Project {
+  id: string
+  name: string
+}
+
 interface NavigationContextValue {
   activeSection: string
   activeSubItem: string
   navMode: NavMode
   hoveredSection: string | null
+  activeProject: Project | null
   setActiveSection: (section: string) => void
   setActiveSubItem: (subItem: string) => void
   setNavMode: (mode: NavMode) => void
   setHoveredSection: (section: string | null) => void
   navigateTo: (section: string, subItem: string) => void
+  setActiveProject: (project: Project | null) => void
+  exitProject: () => void
 }
 
 const NavigationContext = createContext<NavigationContextValue | undefined>(
@@ -35,6 +43,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const [activeSection, setActiveSection] = useState('dashboard')
   const [activeSubItem, setActiveSubItem] = useState('overview')
   const [hoveredSection, setHoveredSection] = useState<string | null>(null)
+  const [activeProject, setActiveProjectState] = useState<Project | null>(null)
   const [navMode, setNavModeState] = useState<NavMode>(() => {
     const stored = localStorage.getItem(NAV_MODE_STORAGE_KEY)
     return (stored as NavMode) || 'standard'
@@ -48,6 +57,22 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const navigateTo = useCallback((section: string, subItem: string) => {
     setActiveSection(section)
     setActiveSubItem(subItem)
+  }, [])
+
+  const setActiveProject = useCallback((project: Project | null) => {
+    setActiveProjectState(project)
+    if (project) {
+      // Reset to campaigns section when entering project mode
+      setActiveSection('campaigns')
+      setActiveSubItem('all')
+    }
+  }, [])
+
+  const exitProject = useCallback(() => {
+    setActiveProjectState(null)
+    // Return to dashboard when exiting project
+    setActiveSection('dashboard')
+    setActiveSubItem('overview')
   }, [])
 
   useEffect(() => {
@@ -64,11 +89,14 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         activeSubItem,
         navMode,
         hoveredSection,
+        activeProject,
         setActiveSection,
         setActiveSubItem,
         setNavMode,
         setHoveredSection,
         navigateTo,
+        setActiveProject,
+        exitProject,
       }}
     >
       {children}

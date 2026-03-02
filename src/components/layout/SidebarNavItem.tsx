@@ -5,22 +5,29 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ArrowRight, FolderKanban } from 'lucide-react'
+import { getSectionLabel } from '@/lib/cross-context'
 import { useNavigation } from './NavigationContext'
-import { NavItem } from './navigation'
+import { NavItem, sampleProjects } from './navigation'
 
 interface SidebarNavItemProps {
   item: NavItem
 }
 
 export function SidebarNavItem({ item }: SidebarNavItemProps) {
-  const { activeSection, activeSubItem, navMode, setActiveSection, setHoveredSection, navigateTo } =
+  const { activeSection, activeSubItem, navMode, setActiveSection, setHoveredSection, navigateTo, setActiveProject } =
     useNavigation()
   const [isOpen, setIsOpen] = useState(false)
   const isHoveringRef = useRef({ trigger: false, content: false })
   const closeTimeoutRef = useRef<number | null>(null)
   const isActive = activeSection === item.id
+
+  // Check if this is the projects section
+  const isProjectsSection = item.id === 'projects'
 
   const handleClick = () => {
     if (navMode !== 'dropdown') {
@@ -30,6 +37,11 @@ export function SidebarNavItem({ item }: SidebarNavItemProps) {
 
   const handleSubItemClick = (subItemId: string) => {
     navigateTo(item.id, subItemId)
+    setIsOpen(false)
+  }
+
+  const handleRelatedSectionClick = (sectionId: string) => {
+    navigateTo(sectionId, 'overview')
     setIsOpen(false)
   }
 
@@ -113,6 +125,46 @@ export function SidebarNavItem({ item }: SidebarNavItemProps) {
                 {child.title}
               </DropdownMenuItem>
             ))}
+            {/* Show project list for Projects section */}
+            {isProjectsSection && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs text-muted-foreground">
+                  Open Project
+                </DropdownMenuLabel>
+                {sampleProjects.map((project) => (
+                  <DropdownMenuItem
+                    key={project.id}
+                    onClick={() => {
+                      setActiveProject(project)
+                      setIsOpen(false)
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <FolderKanban className="mr-2 h-3 w-3" />
+                    {project.name}
+                  </DropdownMenuItem>
+                ))}
+              </>
+            )}
+            {item.relatedSections && item.relatedSections.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs text-muted-foreground">
+                  Related
+                </DropdownMenuLabel>
+                {item.relatedSections.map((sectionId) => (
+                  <DropdownMenuItem
+                    key={sectionId}
+                    onClick={() => handleRelatedSectionClick(sectionId)}
+                    className="cursor-pointer"
+                  >
+                    <ArrowRight className="mr-2 h-3 w-3" />
+                    {getSectionLabel(sectionId)}
+                  </DropdownMenuItem>
+                ))}
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { useNavigation } from './NavigationContext'
-import { allNavigationItems, NavItem } from './navigation'
+import { allNavigationItems, projectNavigationItems, projectSettingsItem, NavItem } from './navigation'
 
 interface SecondaryNavProps {
   className?: string
@@ -41,8 +41,14 @@ function NavTabs({
 }
 
 function StandardNav() {
-  const { activeSection, activeSubItem, setActiveSubItem } = useNavigation()
-  const currentSection = allNavigationItems.find(
+  const { activeSection, activeSubItem, activeProject, setActiveSubItem } = useNavigation()
+
+  // Use project navigation items when in project mode
+  const navigationItems = activeProject
+    ? [...projectNavigationItems, projectSettingsItem]
+    : allNavigationItems
+
+  const currentSection = navigationItems.find(
     (item) => item.id === activeSection
   )
 
@@ -60,11 +66,16 @@ function StandardNav() {
 }
 
 function GlobalNav() {
-  const { activeSection, activeSubItem, navigateTo } = useNavigation()
+  const { activeSection, activeSubItem, activeProject, navigateTo } = useNavigation()
+
+  // Use project navigation items when in project mode
+  const navigationItems = activeProject
+    ? [...projectNavigationItems, projectSettingsItem]
+    : allNavigationItems
 
   return (
     <div className="flex items-center gap-6 overflow-x-auto">
-      {allNavigationItems.map((section) => (
+      {navigationItems.map((section) => (
         <div key={section.id} className="flex items-center gap-1">
           <span className="mr-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {section.title}:

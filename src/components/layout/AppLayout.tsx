@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from './AppSidebar'
+import { ProjectSidebar } from './ProjectSidebar'
 import { SecondaryNav } from './SecondaryNav'
 import { SecondarySidebar } from './SecondarySidebar'
 import { ContextualSidebar } from './ContextualSidebar'
@@ -12,7 +13,22 @@ interface AppLayoutProps {
 }
 
 function AppLayoutContent({ children }: AppLayoutProps) {
-  const { navMode } = useNavigation()
+  const { navMode, activeProject } = useNavigation()
+
+  // Project Mode: Use ProjectSidebar when a project is active
+  if (activeProject) {
+    return (
+      <SidebarProvider key={`project-${activeProject.id}`}>
+        <ProjectSidebar />
+        <SecondarySidebar />
+        <SidebarInset>
+          <SecondaryNav />
+          <main className="flex-1 overflow-auto p-4">{children}</main>
+        </SidebarInset>
+        <NavModeToggle />
+      </SidebarProvider>
+    )
+  }
 
   // Mode E (contextual): Replace AppSidebar with ContextualSidebar
   if (navMode === 'contextual') {
