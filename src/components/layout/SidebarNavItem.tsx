@@ -119,16 +119,17 @@ export function SidebarNavItem({ item }: SidebarNavItemProps) {
     )
   }
 
-  // Mode D: Dual sidebar - icon-only with hover tracking
+  // Mode D: Dual sidebar - icon-only with click-to-change secondary menu
   if (navMode === 'dual-sidebar') {
     return (
       <SidebarMenuItem>
         <SidebarMenuButton
           isActive={isActive}
           tooltip={item.title}
-          onMouseEnter={() => setHoveredSection(item.id)}
-          onMouseLeave={() => setHoveredSection(null)}
-          onClick={() => setActiveSection(item.id)}
+          onClick={() => {
+            setHoveredSection(item.id)
+            setActiveSection(item.id)
+          }}
         >
           <item.icon className="h-4 w-4" />
           <span>{item.title}</span>
