@@ -1,4 +1,5 @@
 export { AppLayout } from './AppLayout'
-export { AppSidebar } from './AppSidebar'
+export { AppSidebarClassic } from './AppSidebarClassic'
+export { AppSidebarNew } from './AppSidebarNew'
 export { TopBar } from './TopBar'
 export { PageHeader } from './PageHeader'

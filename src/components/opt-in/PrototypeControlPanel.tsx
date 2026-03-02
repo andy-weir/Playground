@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   Wrench,
-  Play,
   RotateCcw,
   ToggleLeft,
   ToggleRight,
@@ -30,17 +29,11 @@ export function PrototypeControlPanel() {
   const {
     preferences,
     feedbackLog,
-    startTour,
     enableAllFeatures,
     disableAllFeatures,
     resetAllPreferences,
     dismissBanner,
   } = useFeatureFlags()
-
-  const handleStartTour = (id: FeatureFlagId) => {
-    setOpen(false)
-    setTimeout(() => startTour(id), 300)
-  }
 
   const handleTriggerBanner = (id: FeatureFlagId) => {
     dismissBanner(id, false)
@@ -126,7 +119,6 @@ export function PrototypeControlPanel() {
                           </Badge>
                         </div>
                         <CardDescription className="text-xs">
-                          Tour: {pref.tourCompleted ? 'Completed' : 'Not started'} •
                           Feedback: {pref.feedbackGiven || 'None'}
                         </CardDescription>
                       </CardHeader>
@@ -135,21 +127,11 @@ export function PrototypeControlPanel() {
                           variant="ghost"
                           size="sm"
                           className="h-7 text-xs"
-                          onClick={() => handleStartTour(feature.id)}
-                          disabled={!pref.enabled}
-                        >
-                          <Play className="mr-1 h-3 w-3" />
-                          Tour
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 text-xs"
                           onClick={() => handleTriggerBanner(feature.id)}
                           disabled={pref.enabled}
                         >
                           <Bell className="mr-1 h-3 w-3" />
-                          Banner
+                          Show Banner
                         </Button>
                       </CardContent>
                     </Card>

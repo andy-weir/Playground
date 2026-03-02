@@ -1,27 +1,18 @@
-export type FeatureFlagId = 'newDashboard' | 'advancedAnalytics' | 'aiAssistant'
+export type FeatureFlagId = 'newNavigation'
 
 export type FeatureCategory = 'ui' | 'analytics' | 'experimental'
-
-export interface TourStepConfig {
-  targetSelector: string
-  title: string
-  description: string
-  placement?: 'top' | 'bottom' | 'left' | 'right'
-}
 
 export interface FeatureFlag {
   id: FeatureFlagId
   name: string
   description: string
   category: FeatureCategory
-  tourSteps: TourStepConfig[]
 }
 
 export interface FeaturePreference {
   enabled: boolean
   dismissedBanner: boolean
   remindLaterUntil: number | null
-  tourCompleted: boolean
   feedbackGiven: 'up' | 'down' | null
   feedbackText: string | null
 }
@@ -37,8 +28,6 @@ export interface FeedbackEntry {
 
 export interface FeatureFlagsState {
   preferences: FeaturePreferences
-  activeTour: FeatureFlagId | null
-  activeTourStep: number
   feedbackLog: FeedbackEntry[]
 }
 
@@ -50,11 +39,6 @@ export interface FeatureFlagsContextValue extends FeatureFlagsState {
   toggleFeature: (id: FeatureFlagId) => void
   dismissBanner: (id: FeatureFlagId, permanently: boolean) => void
   shouldShowBanner: (id: FeatureFlagId) => boolean
-  startTour: (id: FeatureFlagId) => void
-  nextTourStep: () => void
-  prevTourStep: () => void
-  skipTour: () => void
-  completeTour: () => void
   submitFeedback: (id: FeatureFlagId, rating: 'up' | 'down', text?: string) => void
   resetAllPreferences: () => void
   enableAllFeatures: () => void

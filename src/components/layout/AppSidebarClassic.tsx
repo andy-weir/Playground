@@ -67,7 +67,7 @@ const settingsItems = [
   },
 ]
 
-export function AppSidebar() {
+export function AppSidebarClassic() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>

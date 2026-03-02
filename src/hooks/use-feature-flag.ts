@@ -24,41 +24,6 @@ export function useOptInBanner(id: FeatureFlagId) {
   }
 }
 
-export function useFeatureTour(id: FeatureFlagId) {
-  const {
-    activeTour,
-    activeTourStep,
-    getFeature,
-    startTour,
-    nextTourStep,
-    prevTourStep,
-    skipTour,
-    completeTour,
-  } = useFeatureFlags()
-
-  const feature = getFeature(id)
-  const isActive = activeTour === id
-  const currentStep = isActive ? feature.tourSteps[activeTourStep] : null
-  const totalSteps = feature.tourSteps.length
-  const isFirstStep = activeTourStep === 0
-  const isLastStep = activeTourStep === totalSteps - 1
-
-  return {
-    feature,
-    isActive,
-    currentStep,
-    currentStepIndex: activeTourStep,
-    totalSteps,
-    isFirstStep,
-    isLastStep,
-    start: () => startTour(id),
-    next: nextTourStep,
-    prev: prevTourStep,
-    skip: skipTour,
-    complete: completeTour,
-  }
-}
-
 export function useFeatureFeedback(id: FeatureFlagId) {
   const { preferences, submitFeedback } = useFeatureFlags()
   const pref = preferences[id]

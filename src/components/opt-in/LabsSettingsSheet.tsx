@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { LabsSettingsToggle } from './LabsSettingsToggle'
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext'
 import { FEATURE_FLAGS } from '@/lib/feature-flags'
-import type { FeatureFlagId, FeatureCategory } from '@/types/feature-flags'
+import type { FeatureCategory } from '@/types/feature-flags'
 
 interface LabsSettingsSheetProps {
   open: boolean
@@ -25,12 +25,7 @@ const CATEGORIES: { key: FeatureCategory; label: string }[] = [
 ]
 
 export function LabsSettingsSheet({ open, onOpenChange }: LabsSettingsSheetProps) {
-  const { startTour, resetAllPreferences } = useFeatureFlags()
-
-  const handleStartTour = (id: FeatureFlagId) => {
-    onOpenChange(false)
-    setTimeout(() => startTour(id), 300)
-  }
+  const { resetAllPreferences } = useFeatureFlags()
 
   const featuresByCategory = CATEGORIES.map(({ key, label }) => ({
     category: key,
@@ -60,7 +55,6 @@ export function LabsSettingsSheet({ open, onOpenChange }: LabsSettingsSheetProps
                   <LabsSettingsToggle
                     key={feature.id}
                     featureId={feature.id}
-                    onStartTour={() => handleStartTour(feature.id)}
                   />
                 ))}
               </div>

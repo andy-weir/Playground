@@ -1,19 +1,16 @@
-import { Play } from 'lucide-react'
 import { motion } from '@/components/motion'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { useFeatureFlag } from '@/hooks/use-feature-flag'
 import { getCategoryLabel, getCategoryColor } from '@/lib/feature-flags'
 import type { FeatureFlagId } from '@/types/feature-flags'
 
 interface LabsSettingsToggleProps {
   featureId: FeatureFlagId
-  onStartTour?: () => void
 }
 
-export function LabsSettingsToggle({ featureId, onStartTour }: LabsSettingsToggleProps) {
+export function LabsSettingsToggle({ featureId }: LabsSettingsToggleProps) {
   const { feature, isEnabled, toggle } = useFeatureFlag(featureId)
 
   return (
@@ -37,14 +34,6 @@ export function LabsSettingsToggle({ featureId, onStartTour }: LabsSettingsToggl
             <Switch checked={isEnabled} onCheckedChange={toggle} />
           </div>
         </CardHeader>
-        {isEnabled && onStartTour && (
-          <CardContent className="pt-0">
-            <Button variant="ghost" size="sm" className="h-8 px-2" onClick={onStartTour}>
-              <Play className="mr-1 h-3 w-3" />
-              Take a tour
-            </Button>
-          </CardContent>
-        )}
         {isEnabled && (
           <motion.div
             initial={{ scaleX: 0 }}

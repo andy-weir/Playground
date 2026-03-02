@@ -20,11 +20,6 @@ const FEEDBACK_KEY = 'feature_feedback'
 type Action =
   | { type: 'SET_ENABLED'; id: FeatureFlagId; enabled: boolean }
   | { type: 'DISMISS_BANNER'; id: FeatureFlagId; permanently: boolean }
-  | { type: 'START_TOUR'; id: FeatureFlagId }
-  | { type: 'NEXT_STEP' }
-  | { type: 'PREV_STEP' }
-  | { type: 'SKIP_TOUR' }
-  | { type: 'COMPLETE_TOUR' }
   | { type: 'SUBMIT_FEEDBACK'; id: FeatureFlagId; rating: 'up' | 'down'; text?: string }
   | { type: 'RESET_ALL' }
   | { type: 'SET_ALL_ENABLED'; enabled: boolean }
@@ -42,8 +37,6 @@ function reducer(state: FeatureFlagsState, action: Action): FeatureFlagsState {
       return {
         ...state,
         preferences: newPreferences,
-        activeTour: action.enabled && !state.preferences[action.id].tourCompleted ? action.id : state.activeTour,
-        activeTourStep: action.enabled && !state.preferences[action.id].tourCompleted ? 0 : state.activeTourStep,
       }
     }
 
@@ -58,62 +51,6 @@ function reducer(state: FeatureFlagsState, action: Action): FeatureFlagsState {
             remindLaterUntil: action.permanently ? null : Date.now() + REMIND_LATER_DURATION_MS,
           },
         },
-      }
-    }
-
-    case 'START_TOUR': {
-      return {
-        ...state,
-        activeTour: action.id,
-        activeTourStep: 0,
-      }
-    }
-
-    case 'NEXT_STEP': {
-      if (!state.activeTour) return state
-      const totalSteps = FEATURE_FLAG_MAP[state.activeTour].tourSteps.length
-      if (state.activeTourStep >= totalSteps - 1) {
-        return {
-          ...state,
-          preferences: {
-            ...state.preferences,
-            [state.activeTour]: {
-              ...state.preferences[state.activeTour],
-              tourCompleted: true,
-            },
-          },
-          activeTour: null,
-          activeTourStep: 0,
-        }
-      }
-      return {
-        ...state,
-        activeTourStep: state.activeTourStep + 1,
-      }
-    }
-
-    case 'PREV_STEP': {
-      if (!state.activeTour || state.activeTourStep <= 0) return state
-      return {
-        ...state,
-        activeTourStep: state.activeTourStep - 1,
-      }
-    }
-
-    case 'SKIP_TOUR':
-    case 'COMPLETE_TOUR': {
-      if (!state.activeTour) return state
-      return {
-        ...state,
-        preferences: {
-          ...state.preferences,
-          [state.activeTour]: {
-            ...state.preferences[state.activeTour],
-            tourCompleted: true,
-          },
-        },
-        activeTour: null,
-        activeTourStep: 0,
       }
     }
 
@@ -141,8 +78,6 @@ function reducer(state: FeatureFlagsState, action: Action): FeatureFlagsState {
     case 'RESET_ALL': {
       return {
         preferences: DEFAULT_PREFERENCES,
-        activeTour: null,
-        activeTourStep: 0,
         feedbackLog: [],
       }
     }
@@ -186,8 +121,6 @@ function getInitialState(): FeatureFlagsState {
 
   return {
     preferences,
-    activeTour: null,
-    activeTourStep: 0,
     feedbackLog: savedFeedback,
   }
 }
@@ -239,26 +172,6 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
     [state.preferences]
   )
 
-  const startTour = useCallback((id: FeatureFlagId) => {
-    dispatch({ type: 'START_TOUR', id })
-  }, [])
-
-  const nextTourStep = useCallback(() => {
-    dispatch({ type: 'NEXT_STEP' })
-  }, [])
-
-  const prevTourStep = useCallback(() => {
-    dispatch({ type: 'PREV_STEP' })
-  }, [])
-
-  const skipTour = useCallback(() => {
-    dispatch({ type: 'SKIP_TOUR' })
-  }, [])
-
-  const completeTour = useCallback(() => {
-    dispatch({ type: 'COMPLETE_TOUR' })
-  }, [])
-
   const submitFeedback = useCallback((id: FeatureFlagId, rating: 'up' | 'down', text?: string) => {
     dispatch({ type: 'SUBMIT_FEEDBACK', id, rating, text })
   }, [])
@@ -284,11 +197,6 @@ export function FeatureFlagsProvider({ children }: { children: ReactNode }) {
     toggleFeature,
     dismissBanner,
     shouldShowBanner,
-    startTour,
-    nextTourStep,
-    prevTourStep,
-    skipTour,
-    completeTour,
     submitFeedback,
     resetAllPreferences,
     enableAllFeatures,
