@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { toast } from '@/components/ui/sonner'
 import { PageHeader } from '@/components/layout'
+import { OptInBanner, FeedbackPill } from '@/components/opt-in'
 
 const features = [
   {
@@ -52,6 +53,10 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-6">
+      <OptInBanner featureId="newDashboard" />
+      <OptInBanner featureId="advancedAnalytics" />
+      <OptInBanner featureId="aiAssistant" />
+
       <PageHeader
         title="Dashboard"
         breadcrumbs={[
@@ -62,7 +67,7 @@ export default function Home() {
           <>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button data-tour="new-item-button">
                   <Plus className="mr-2 h-4 w-4" />
                   New Item
                 </Button>
@@ -96,6 +101,7 @@ export default function Home() {
 
       {/* Stats Overview */}
       <motion.div
+        data-tour="stats-overview"
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -123,6 +129,7 @@ export default function Home() {
 
       {/* Features Section */}
       <motion.div
+        data-tour="features-section"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
@@ -162,6 +169,8 @@ export default function Home() {
           </motion.div>
         ))}
       </motion.div>
+
+      <FeedbackPill featureId="newDashboard" />
     </div>
   )
 }

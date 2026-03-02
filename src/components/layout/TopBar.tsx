@@ -1,14 +1,16 @@
-import { Moon, Sun } from 'lucide-react'
+import { FlaskConical, Moon, Sun } from 'lucide-react'
 import { useState } from 'react'
 import { AnimatePresence, motion } from '@/components/motion'
 import { Button } from '@/components/ui/button'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
+import { LabsSettingsSheet } from '@/components/opt-in'
 
 export function TopBar() {
   const [isDark, setIsDark] = useState(
     document.documentElement.classList.contains('dark')
   )
+  const [labsOpen, setLabsOpen] = useState(false)
 
   const toggleTheme = () => {
     setIsDark(!isDark)
@@ -20,6 +22,11 @@ export function TopBar() {
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="flex-1" />
+      <Button variant="ghost" size="icon" onClick={() => setLabsOpen(true)}>
+        <FlaskConical className="h-5 w-5" />
+        <span className="sr-only">Open Labs settings</span>
+      </Button>
+      <LabsSettingsSheet open={labsOpen} onOpenChange={setLabsOpen} />
       <Button variant="ghost" size="icon" onClick={toggleTheme}>
         <AnimatePresence mode="wait">
           {isDark ? (
