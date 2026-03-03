@@ -11,6 +11,10 @@ import {
   Handshake,
   FileText,
   BarChart3,
+  Bell,
+  BookOpen,
+  HelpCircle,
+  Plug,
 } from 'lucide-react'
 
 export interface NavSubItem {
@@ -105,11 +109,104 @@ export const settingsItem: NavItem = {
     { id: 'general', title: 'General', href: '#' },
     { id: 'team', title: 'Team', href: '#' },
     { id: 'billing', title: 'Billing', href: '#' },
-    { id: 'integrations', title: 'Integrations', href: '#' },
+    { id: 'subscriptions', title: 'Subscriptions', href: '#' },
+    {
+      id: 'tracking',
+      title: 'Tracking',
+      href: '#',
+      children: [
+        { id: 'domains', title: 'Domains', href: '#' },
+        { id: 'domain-allow-list', title: 'Domain allow list', href: '#' },
+        { id: 'ip-filtering', title: 'IP filtering', href: '#' },
+        { id: 'geo-filters', title: 'Geo filters', href: '#' },
+        { id: 'conversions', title: 'Conversions', href: '#' },
+      ],
+    },
+    {
+      id: 'email',
+      title: 'Email',
+      href: '#',
+      children: [
+        { id: 'email-addresses', title: 'Email addresses', href: '#' },
+        { id: 'templates', title: 'Templates', href: '#' },
+      ],
+    },
+    {
+      id: 'advertising',
+      title: 'Advertising',
+      href: '#',
+      children: [
+        { id: 'advertisers', title: 'Advertisers', href: '#' },
+        { id: 'flags', title: 'Flags', href: '#' },
+      ],
+    },
+    {
+      id: 'branding',
+      title: 'Branding',
+      href: '#',
+      children: [
+        { id: 'fonts', title: 'Fonts', href: '#' },
+      ],
+    },
   ],
 }
 
-export const allNavigationItems: NavItem[] = [...navigationItems, projectsItem, accountsItem, settingsItem]
+export const integrationsItem: NavItem = {
+  id: 'integrations',
+  title: 'Integrations',
+  icon: Plug,
+  children: [
+    {
+      id: 'api',
+      title: 'API',
+      href: '#',
+      children: [
+        { id: 'api-keys', title: 'API keys', href: '#' },
+      ],
+    },
+    {
+      id: 'crm',
+      title: 'CRM',
+      href: '#',
+      children: [
+        { id: 'raisers-edge-nxt', title: "Raiser's Edge NXT", href: '#' },
+        { id: 'salesforce-npsp', title: 'Salesforce NPSP', href: '#' },
+      ],
+    },
+    {
+      id: 'advertising-platforms',
+      title: 'Advertising Platforms',
+      href: '#',
+      children: [
+        { id: 'google-ads', title: 'Google Ads', href: '#' },
+        { id: 'meta', title: 'Meta', href: '#' },
+      ],
+    },
+  ],
+}
+
+export const notificationsItem: NavItem = {
+  id: 'notifications',
+  title: 'Notifications',
+  icon: Bell,
+  children: [],
+}
+
+export const resourcesItem: NavItem = {
+  id: 'resources',
+  title: 'Resources',
+  icon: BookOpen,
+  children: [],
+}
+
+export const helpItem: NavItem = {
+  id: 'help',
+  title: 'Help',
+  icon: HelpCircle,
+  children: [],
+}
+
+export const allNavigationItems: NavItem[] = [...navigationItems, projectsItem, accountsItem, settingsItem, integrationsItem]
 
 // Project Mode Navigation Items
 export const projectNavigationItems: NavItem[] = [

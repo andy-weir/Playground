@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/context-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { SidebarNavItem } from './SidebarNavItem'
-import { navigationItems, projectsItem, accountsItem, settingsItem, sampleProjects } from './navigation'
+import { navigationItems, projectsItem, accountsItem, settingsItem, integrationsItem, notificationsItem, resourcesItem, helpItem, sampleProjects } from './navigation'
 import { useNavigation } from './NavigationContext'
 
 export function AppSidebar() {
@@ -183,29 +183,20 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup className="mt-auto">
+        <SidebarGroup className="mt-auto pt-4 border-t border-sidebar-border">
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={toggleTheme}
-                  tooltip={isDark ? 'Light mode' : 'Dark mode'}
-                >
-                  {isDark ? (
-                    <Sun className="h-4 w-4" />
-                  ) : (
-                    <Moon className="h-4 w-4" />
-                  )}
-                  <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <SidebarNavItem key={notificationsItem.id} item={notificationsItem} />
+              <SidebarNavItem key={resourcesItem.id} item={resourcesItem} />
+              <SidebarNavItem key={helpItem.id} item={helpItem} />
+              <SidebarNavItem key={integrationsItem.id} item={integrationsItem} />
+              <SidebarNavItem key={settingsItem.id} item={settingsItem} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarNavItem key="settings" item={settingsItem} />
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -232,8 +223,21 @@ export function AppSidebar() {
                 align="start"
                 sideOffset={4}
               >
-                <DropdownMenuItem>Account settings</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>Notifications</DropdownMenuItem>
+                <DropdownMenuItem>Security</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={toggleTheme}>
+                  {isDark ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                  {isDark ? 'Light mode' : 'Dark mode'}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Privacy policy</DropdownMenuItem>
+                <DropdownMenuItem>Terms and conditions</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Log out</DropdownMenuItem>
               </DropdownMenuContent>
