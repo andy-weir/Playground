@@ -17,6 +17,7 @@ export interface NavSubItem {
   id: string
   title: string
   href: string
+  children?: NavSubItem[] // For accordion sub-items
 }
 
 export interface NavItem {
@@ -32,11 +33,7 @@ export const navigationItems: NavItem[] = [
     id: 'dashboard',
     title: 'Dashboard',
     icon: LayoutDashboard,
-    children: [
-      { id: 'overview', title: 'Overview', href: '#' },
-      { id: 'analytics', title: 'Analytics', href: '#' },
-      { id: 'activity', title: 'Activity', href: '#' },
-    ],
+    children: [], // No secondary nav
   },
   {
     id: 'campaigns',
@@ -54,22 +51,35 @@ export const navigationItems: NavItem[] = [
     id: 'fundraising',
     title: 'Fundraising',
     icon: Heart,
-    children: [
-      { id: 'overview', title: 'Overview', href: '#' },
-      { id: 'donation-forms', title: 'Donation Forms', href: '#' },
-      { id: 'campaigns', title: 'Campaigns', href: '#' },
-    ],
+    children: [], // No secondary nav for now
   },
   {
     id: 'community',
     title: 'Community',
     icon: Users2,
     children: [
+      {
+        id: 'people',
+        title: 'People',
+        href: '#',
+        children: [
+          { id: 'all-people', title: 'All People', href: '#' },
+          { id: 'segments', title: 'Segments', href: '#' },
+        ],
+      },
       { id: 'groups', title: 'Groups', href: '#' },
-      { id: 'members', title: 'Members', href: '#' },
-      { id: 'resources', title: 'Resources', href: '#' },
+      { id: 'custom-fields', title: 'Custom Fields', href: '#' },
+      { id: 'imports', title: 'Imports', href: '#' },
+      {
+        id: 'super-pixel',
+        title: 'Super Pixel',
+        href: '#',
+        children: [
+          { id: 'setup', title: 'Setup', href: '#' },
+          { id: 'tracking', title: 'Tracking', href: '#' },
+        ],
+      },
     ],
-    relatedSections: ['projects', 'campaigns'],
   },
 ]
 
@@ -77,22 +87,14 @@ export const projectsItem: NavItem = {
   id: 'projects',
   title: 'Projects',
   icon: FolderKanban,
-  children: [
-    { id: 'overview', title: 'Overview', href: '#' },
-    { id: 'my-projects', title: 'My Projects', href: '#' },
-    { id: 'templates', title: 'Templates', href: '#' },
-  ],
+  children: [], // No secondary nav - projects page shows grid/list of projects
 }
 
 export const accountsItem: NavItem = {
   id: 'accounts',
   title: 'Accounts',
   icon: Users,
-  children: [
-    { id: 'all-people', title: 'All People', href: '#' },
-    { id: 'segments', title: 'Segments', href: '#' },
-    { id: 'imports', title: 'Imports', href: '#' },
-  ],
+  children: [], // No secondary nav
 }
 
 export const settingsItem: NavItem = {

@@ -1,167 +1,85 @@
-import { useState } from 'react'
-import { Sparkles, Zap, Shield, Plus } from 'lucide-react'
-import { motion, staggerContainer, staggerItem, slideUp, scaleIn } from '@/components/motion'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { toast } from '@/components/ui/sonner'
+import { FileText, FolderKanban } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { PageHeader } from '@/components/layout'
+import { useNavigation } from '@/components/layout/NavigationContext'
+import { allNavigationItems, projectNavigationItems, projectSettingsItem, sampleProjects } from '@/components/layout/navigation'
 
-const features = [
-  {
-    icon: Sparkles,
-    title: 'Beautiful Components',
-    description: 'Pre-built shadcn/ui components with consistent styling and accessibility.',
-  },
-  {
-    icon: Zap,
-    title: 'Motion Animations',
-    description: 'Smooth, performant animations powered by Motion library.',
-  },
-  {
-    icon: Shield,
-    title: 'Type Safe',
-    description: 'Full TypeScript support with strict mode enabled.',
-  },
-]
+function EmptyState() {
+  return (
+    <Card className="flex-1">
+      <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <FileText className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <h3 className="mb-2 text-lg font-semibold">Content Area</h3>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          This is a placeholder for page content. Components, data tables, forms, or any other content would go here.
+        </p>
+      </CardContent>
+    </Card>
+  )
+}
 
-export default function Home() {
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [inputValue, setInputValue] = useState('')
-
-  const handleSubmit = () => {
-    if (inputValue.trim()) {
-      toast.success('Form submitted!', {
-        description: `You entered: ${inputValue}`,
-      })
-      setInputValue('')
-      setDialogOpen(false)
-    } else {
-      toast.error('Please enter a value')
-    }
-  }
+function ProjectsGrid() {
+  const { setActiveProject } = useNavigation()
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sampleProjects.map((project) => (
+        <Card
+          key={project.id}
+          className="cursor-pointer hover:border-primary/50 hover:shadow-md transition-all"
+          onClick={() => setActiveProject(project)}
+        >
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+              <FolderKanban className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold">{project.name}</h3>
+              <p className="text-sm text-muted-foreground">Click to open project</p>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+export default function Home() {
+  const { activeSection, activeSubItem, activeProject } = useNavigation()
+
+  // Projects page (no active project) - show projects grid
+  const isProjectsPage = activeSection === 'projects' && !activeProject
+
+  // Get navigation items based on context
+  const navigationItems = activeProject
+    ? [...projectNavigationItems, projectSettingsItem]
+    : allNavigationItems
+
+  // Find current section and sub-item
+  const currentSection = navigationItems.find((item) => item.id === activeSection)
+  const currentSubItem = currentSection?.children.find((child) => child.id === activeSubItem)
+
+  // Build breadcrumbs
+  const sectionTitle = currentSection?.title || 'Dashboard'
+  const subItemTitle = currentSubItem?.title
+
+  const breadcrumbs = [
+    { label: 'Home', href: '#' },
+    { label: sectionTitle },
+  ]
+
+  // Page title - for projects page, use section title; otherwise use sub-item title
+  const pageTitle = isProjectsPage ? sectionTitle : (subItemTitle || 'Overview')
+
+  return (
+    <div className="flex flex-col gap-6 h-full">
       <PageHeader
-        title="Dashboard"
-        breadcrumbs={[
-          { label: 'Home', href: '#' },
-          { label: 'Dashboard' },
-        ]}
-        actions={
-          <>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Item
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Item</DialogTitle>
-                  <DialogDescription>
-                    Enter details for your new item.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="py-4">
-                  <Input
-                    placeholder="Enter something..."
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                  />
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleSubmit}>Create</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </>
-        }
+        title={pageTitle}
+        breadcrumbs={breadcrumbs}
       />
-
-      {/* Stats Overview */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
-      >
-        {[
-          { label: 'Total Campaigns', value: '12', change: '+2 from last month' },
-          { label: 'Active Audiences', value: '3,245', change: '+12% growth' },
-          { label: 'Form Submissions', value: '892', change: '+18% this week' },
-          { label: 'Growth Credits', value: '$4,523', change: 'Available balance' },
-        ].map((stat, index) => (
-          <motion.div key={index} variants={staggerItem}>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardDescription>{stat.label}</CardDescription>
-                <CardTitle className="text-3xl">{stat.value}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">{stat.change}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Features Section */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-        className="grid gap-6 md:grid-cols-3"
-      >
-        {features.map((feature, index) => (
-          <motion.div key={index} variants={slideUp}>
-            <motion.div
-              whileHover={{ y: -4 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              <Card className="h-full">
-                <CardHeader>
-                  <motion.div
-                    variants={scaleIn}
-                    className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground"
-                  >
-                    <feature.icon className="h-5 w-5" />
-                  </motion.div>
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button
-                    variant="ghost"
-                    className="px-0"
-                    onClick={() =>
-                      toast.info(`Learn more about ${feature.title}`)
-                    }
-                  >
-                    Learn more →
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
-        ))}
-      </motion.div>
+      {isProjectsPage ? <ProjectsGrid /> : <EmptyState />}
     </div>
   )
 }

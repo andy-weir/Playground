@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ArrowRight, FolderKanban } from 'lucide-react'
+import { ArrowRight, FolderKanban, ChevronRight } from 'lucide-react'
 import { getSectionLabel } from '@/lib/cross-context'
 import { useNavigation } from './NavigationContext'
 import { NavItem, sampleProjects } from './navigation'
@@ -19,12 +19,15 @@ interface SidebarNavItemProps {
 }
 
 export function SidebarNavItem({ item }: SidebarNavItemProps) {
-  const { activeSection, activeSubItem, navMode, setActiveSection, setHoveredSection, navigateTo, setActiveProject } =
+  const { activeSection, activeSubItem, navMode, activeProject, setActiveSection, setHoveredSection, navigateTo, setActiveProject } =
     useNavigation()
   const [isOpen, setIsOpen] = useState(false)
   const isHoveringRef = useRef({ trigger: false, content: false })
   const closeTimeoutRef = useRef<number | null>(null)
-  const isActive = activeSection === item.id
+
+  // Don't show workspace nav items as active when in accordion-sidebar mode with a project
+  const isInProjectMode = navMode === 'accordion-sidebar' && activeProject !== null
+  const isActive = isInProjectMode ? false : activeSection === item.id
 
   // Check if this is the projects section
   const isProjectsSection = item.id === 'projects'
@@ -96,9 +99,9 @@ export function SidebarNavItem({ item }: SidebarNavItemProps) {
               onMouseLeave={handleTriggerLeave}
               className={cn(
                 'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none',
-                'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
-                isActive && 'bg-sidebar-accent text-sidebar-accent-foreground'
+                !isActive && 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+                !isActive && 'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
+                isActive && 'bg-sidebar-primary text-sidebar-primary-foreground font-semibold'
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -171,38 +174,46 @@ export function SidebarNavItem({ item }: SidebarNavItemProps) {
     )
   }
 
-  // Mode D: Dual sidebar - icon-only with click-to-change secondary menu
-  if (navMode === 'dual-sidebar') {
-    return (
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          isActive={isActive}
-          tooltip={item.title}
-          onClick={() => {
-            setHoveredSection(item.id)
-            setActiveSection(item.id)
-          }}
-        >
-          <item.icon className="h-4 w-4" />
-          <span>{item.title}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    )
+  // Dual sidebar / Accordion sidebar - click to navigate
+  const hasSecondaryNav = item.children && item.children.length > 0
+
+  // Find the first selectable sub-item (handles accordion case)
+  const getFirstSubItemId = () => {
+    if (!item.children || item.children.length === 0) return null
+    const firstChild = item.children[0]
+    // If first child has nested children (accordion), return first nested child
+    if (firstChild.children && firstChild.children.length > 0) {
+      return firstChild.children[0].id
+    }
+    return firstChild.id
   }
 
-  // Modes A & C: Standard click behavior
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        asChild
         isActive={isActive}
         tooltip={item.title}
-        onClick={handleClick}
+        onClick={() => {
+          // Exit project mode when navigating to workspace sections
+          if (isInProjectMode) {
+            setActiveProject(null)
+          }
+          setHoveredSection(item.id)
+
+          // If has secondary nav, navigate to first sub-item
+          const firstSubItemId = getFirstSubItemId()
+          if (firstSubItemId) {
+            navigateTo(item.id, firstSubItemId)
+          } else {
+            setActiveSection(item.id)
+          }
+        }}
       >
-        <a href={item.children[0]?.href || '#'}>
-          <item.icon />
-          <span>{item.title}</span>
-        </a>
+        <item.icon className="h-4 w-4" />
+        <span className="flex-1">{item.title}</span>
+        {hasSecondaryNav && (
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        )}
       </SidebarMenuButton>
     </SidebarMenuItem>
   )

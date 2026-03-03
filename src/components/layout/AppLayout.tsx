@@ -4,7 +4,6 @@ import { AppSidebar } from './AppSidebar'
 import { ProjectSidebar } from './ProjectSidebar'
 import { SecondaryNav } from './SecondaryNav'
 import { SecondarySidebar } from './SecondarySidebar'
-import { ContextualSidebar } from './ContextualSidebar'
 import { NavModeToggle } from './NavModeToggle'
 import { NavigationProvider, useNavigation } from './NavigationContext'
 
@@ -13,12 +12,12 @@ interface AppLayoutProps {
 }
 
 function AppLayoutContent({ children }: AppLayoutProps) {
-  const { navMode, activeProject } = useNavigation()
+  const { activeProject, navMode, sidebarOpen, setSidebarOpen } = useNavigation()
 
-  // Project Mode: Use ProjectSidebar when a project is active
-  if (activeProject) {
+  // Dual-sidebar mode with active project: Use ProjectSidebar (original behavior)
+  if (activeProject && navMode === 'dual-sidebar') {
     return (
-      <SidebarProvider key={`project-${activeProject.id}`}>
+      <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <ProjectSidebar />
         <SecondarySidebar />
         <SidebarInset>
@@ -30,26 +29,9 @@ function AppLayoutContent({ children }: AppLayoutProps) {
     )
   }
 
-  // Mode E (contextual): Replace AppSidebar with ContextualSidebar
-  if (navMode === 'contextual') {
-    return (
-      <div className="flex h-screen w-full">
-        <ContextualSidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <main className="flex-1 overflow-auto p-4">{children}</main>
-        </div>
-        <NavModeToggle />
-      </div>
-    )
-  }
-
-  // Mode D (dual-sidebar): Force collapsed state, other modes use default
-  const sidebarProps = navMode === 'dual-sidebar'
-    ? { defaultOpen: false }
-    : {}
-
+  // All other cases: Use AppSidebar (includes accordion-sidebar mode)
   return (
-    <SidebarProvider key={navMode} {...sidebarProps}>
+    <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
       <AppSidebar />
       <SecondarySidebar />
       <SidebarInset>

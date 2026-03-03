@@ -14,29 +14,19 @@ import { cn } from '@/lib/utils'
 const navModeOptions: { value: NavMode; label: string; description: string }[] =
   [
     {
-      value: 'standard',
-      label: 'Mode A: Standard',
-      description: 'Click sidebar, secondary nav updates',
-    },
-    {
       value: 'dropdown',
-      label: 'Mode B: Dropdown',
+      label: 'Dropdown',
       description: 'Dropdown appears on sidebar items',
     },
     {
-      value: 'global',
-      label: 'Mode C: Global',
-      description: 'All sections visible in secondary nav',
-    },
-    {
       value: 'dual-sidebar',
-      label: 'Mode D: Dual Sidebar',
+      label: 'Dual Sidebar',
       description: 'Icon sidebar + secondary sidebar for sub-items',
     },
     {
-      value: 'contextual',
-      label: 'Mode E: Contextual',
-      description: 'Section picker + contextual sub-items sidebar',
+      value: 'accordion-sidebar',
+      label: 'Accordion Sidebar',
+      description: 'Primary sidebar stays visible, project nav in accordions',
     },
   ]
 

@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from 'react'
 
-export type NavMode = 'standard' | 'dropdown' | 'global' | 'dual-sidebar' | 'contextual'
+export type NavMode = 'dropdown' | 'dual-sidebar' | 'accordion-sidebar'
 
 export interface Project {
   id: string
@@ -20,6 +20,7 @@ interface NavigationContextValue {
   navMode: NavMode
   hoveredSection: string | null
   activeProject: Project | null
+  sidebarOpen: boolean
   setActiveSection: (section: string) => void
   setActiveSubItem: (subItem: string) => void
   setNavMode: (mode: NavMode) => void
@@ -27,6 +28,7 @@ interface NavigationContextValue {
   navigateTo: (section: string, subItem: string) => void
   setActiveProject: (project: Project | null) => void
   exitProject: () => void
+  setSidebarOpen: (open: boolean) => void
 }
 
 const NavigationContext = createContext<NavigationContextValue | undefined>(
@@ -44,9 +46,10 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const [activeSubItem, setActiveSubItem] = useState('overview')
   const [hoveredSection, setHoveredSection] = useState<string | null>(null)
   const [activeProject, setActiveProjectState] = useState<Project | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [navMode, setNavModeState] = useState<NavMode>(() => {
     const stored = localStorage.getItem(NAV_MODE_STORAGE_KEY)
-    return (stored as NavMode) || 'standard'
+    return (stored as NavMode) || 'dual-sidebar'
   })
 
   const setNavMode = useCallback((mode: NavMode) => {
@@ -77,7 +80,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 
   useEffect(() => {
     const stored = localStorage.getItem(NAV_MODE_STORAGE_KEY)
-    if (stored && ['standard', 'dropdown', 'global', 'dual-sidebar', 'contextual'].includes(stored)) {
+    if (stored && ['dropdown', 'dual-sidebar'].includes(stored)) {
       setNavModeState(stored as NavMode)
     }
   }, [])
@@ -90,6 +93,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         navMode,
         hoveredSection,
         activeProject,
+        sidebarOpen,
         setActiveSection,
         setActiveSubItem,
         setNavMode,
@@ -97,6 +101,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         navigateTo,
         setActiveProject,
         exitProject,
+        setSidebarOpen,
       }}
     >
       {children}

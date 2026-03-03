@@ -107,7 +107,8 @@ export function SecondaryNav({ className }: SecondaryNavProps) {
   // Mode B (dropdown): No secondary nav - dropdowns provide sub-item access
   // Mode D (dual-sidebar): No horizontal secondary nav - vertical sidebar provides sub-item access
   // Mode E (contextual): No horizontal secondary nav - contextual sidebar provides sub-item access
-  if (navMode === 'dropdown' || navMode === 'dual-sidebar' || navMode === 'contextual') {
+  // Accordion-sidebar: No horizontal nav - accordion sidebar provides sub-item access
+  if (navMode === 'dropdown' || navMode === 'dual-sidebar' || navMode === 'contextual' || navMode === 'accordion-sidebar') {
     return null
   }
 
