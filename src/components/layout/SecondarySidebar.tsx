@@ -158,7 +158,7 @@ export function SecondarySidebar() {
                           className="border-none"
                         >
                           <AccordionTrigger
-                            className="rounded-md p-2 hover:no-underline hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                            className="rounded-md p-2 font-normal hover:no-underline hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
                             onClick={(e) => {
                               const isChevronClick = (e.target as HTMLElement).closest('[data-accordion-chevron]') !== null
                               if (!isChevronClick && firstChildId) {
@@ -214,12 +214,10 @@ export function SecondarySidebar() {
                     <Accordion
                       type="multiple"
                       className="w-full flex flex-col gap-1"
-                      key={`${displaySection}-${activeSubItem}`}
+                      key={displaySection}
                       defaultValue={
                         sectionData?.children
-                          ?.filter((child) =>
-                            child.children?.some((subChild) => subChild.id === activeSubItem)
-                          )
+                          ?.filter((child) => child.children && child.children.length > 0)
                           .map((child) => child.id) || []
                       }
                     >
@@ -234,7 +232,7 @@ export function SecondarySidebar() {
                               className="border-none"
                             >
                               <AccordionTrigger
-                                className="rounded-md p-2 hover:no-underline hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                                className="rounded-md p-2 font-normal hover:no-underline hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
                                 onClick={(e) => {
                                   const isChevronClick = (e.target as HTMLElement).closest('[data-accordion-chevron]') !== null
                                   if (!isChevronClick && firstChildId) {
