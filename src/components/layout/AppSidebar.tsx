@@ -133,24 +133,18 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarNavItem key={projectsItem.id} item={projectsItem} />
               {/* Saved Projects List - hidden when collapsed */}
-              {sampleProjects.map((project) => {
-                const isActive = activeProject?.id === project.id
-                return (
-                  <SidebarMenuItem key={project.id} className="group-data-[collapsible=icon]:hidden">
-                    <SidebarMenuButton
-                      className={
-                        isActive
-                          ? 'pl-8 bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                          : 'pl-8 text-muted-foreground'
-                      }
-                      onClick={() => setActiveProject(project)}
-                    >
-                      <span className="flex-1 truncate">{project.name}</span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
+              {sampleProjects.map((project) => (
+                <SidebarMenuItem key={project.id} className="group-data-[collapsible=icon]:hidden">
+                  <SidebarMenuButton
+                    isActive={activeProject?.id === project.id}
+                    className="pl-8"
+                    onClick={() => setActiveProject(project)}
+                  >
+                    <span className="flex-1 truncate">{project.name}</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
