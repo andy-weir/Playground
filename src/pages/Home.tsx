@@ -65,10 +65,16 @@ export default function Home() {
   const sectionTitle = currentSection?.title || 'Dashboard'
   const subItemTitle = currentSubItem?.title
 
-  const breadcrumbs = [
-    { label: 'Home', href: '#' },
-    { label: sectionTitle },
-  ]
+  const breadcrumbs = activeProject
+    ? [
+        { label: 'Home', href: '#' },
+        { label: activeProject.name, href: '#' },
+        { label: sectionTitle },
+      ]
+    : [
+        { label: 'Home', href: '#' },
+        { label: sectionTitle },
+      ]
 
   // Page title - for projects page, use section title; otherwise use sub-item title
   const pageTitle = isProjectsPage ? sectionTitle : (subItemTitle || 'Overview')

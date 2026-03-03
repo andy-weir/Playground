@@ -37,7 +37,7 @@ export const navigationItems: NavItem[] = [
   },
   {
     id: 'campaigns',
-    title: 'Campaigns',
+    title: 'All Campaigns',
     icon: Megaphone,
     children: [
       { id: 'overview', title: 'Overview', href: '#' },
