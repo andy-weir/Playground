@@ -1,8 +1,9 @@
-import { FileText, FolderKanban } from 'lucide-react'
+import { FileText, FolderKanban, Star } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageHeader } from '@/components/layout'
 import { useNavigation } from '@/components/layout/NavigationContext'
 import { allNavigationItems, projectNavigationItems, projectSettingsItem, sampleProjects } from '@/components/layout/navigation'
+import { cn } from '@/lib/utils'
 
 function EmptyState() {
   return (
@@ -21,27 +22,51 @@ function EmptyState() {
 }
 
 function ProjectsGrid() {
-  const { setActiveProject } = useNavigation()
+  const { setActiveProject, toggleFavorite, isFavorite } = useNavigation()
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {sampleProjects.map((project) => (
-        <Card
-          key={project.id}
-          className="cursor-pointer hover:border-primary/50 hover:shadow-md transition-all"
-          onClick={() => setActiveProject(project)}
-        >
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
-              <FolderKanban className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <div>
-              <h3 className="font-semibold">{project.name}</h3>
-              <p className="text-sm text-muted-foreground">Click to open project</p>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {sampleProjects.map((project) => {
+        const favorited = isFavorite(project.id)
+        return (
+          <Card
+            key={project.id}
+            className="group relative cursor-pointer hover:border-primary/50 hover:shadow-md transition-all"
+            onClick={() => setActiveProject(project)}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleFavorite(project.id)
+              }}
+              className={cn(
+                'absolute top-3 right-3 p-1 rounded-md transition-opacity z-10',
+                'hover:bg-muted',
+                favorited ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              )}
+              aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <Star
+                className={cn(
+                  'h-4 w-4',
+                  favorited
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-muted-foreground'
+                )}
+              />
+            </button>
+            <CardContent className="flex items-center gap-4 p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+                <FolderKanban className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="font-semibold">{project.name}</h3>
+                <p className="text-sm text-muted-foreground">Click to open project</p>
+              </div>
+            </CardContent>
+          </Card>
+        )
+      })}
     </div>
   )
 }

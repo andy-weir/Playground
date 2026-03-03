@@ -1,4 +1,4 @@
-import { ChevronUp, ChevronRight, Building2, PanelLeftClose, PanelLeft, Moon, Sun } from 'lucide-react'
+import { ChevronUp, ChevronRight, Building2, PanelLeftClose, PanelLeft, Moon, Sun, Star } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -21,14 +21,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { SidebarNavItem } from './SidebarNavItem'
 import { navigationItems, projectsItem, accountsItem, settingsItem, sampleProjects } from './navigation'
 import { useNavigation } from './NavigationContext'
 
 export function AppSidebar() {
-  const { activeProject, setActiveProject } = useNavigation()
+  const { activeProject, setActiveProject, favoriteProjectIds, toggleFavorite } = useNavigation()
   const { toggleSidebar, state } = useSidebar()
+  const favoriteProjects = sampleProjects.filter((p) => favoriteProjectIds.includes(p.id))
   const [isDark, setIsDark] = useState(
     document.documentElement.classList.contains('dark')
   )
@@ -132,17 +139,37 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarNavItem key={projectsItem.id} item={projectsItem} />
-              {/* Saved Projects List - hidden when collapsed */}
-              {sampleProjects.map((project) => (
-                <SidebarMenuItem key={project.id} className="group-data-[collapsible=icon]:hidden">
-                  <SidebarMenuButton
-                    isActive={activeProject?.id === project.id}
-                    className="pl-8"
-                    onClick={() => setActiveProject(project)}
-                  >
-                    <span className="flex-1 truncate">{project.name}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </SidebarMenuButton>
+              {/* Favorited Projects List - hidden when collapsed */}
+              {favoriteProjects.map((project) => (
+                <SidebarMenuItem key={project.id} className="group/project group-data-[collapsible=icon]:hidden">
+                  <ContextMenu>
+                    <ContextMenuTrigger asChild>
+                      <SidebarMenuButton
+                        isActive={activeProject?.id === project.id}
+                        className="pl-8"
+                        onClick={() => setActiveProject(project)}
+                      >
+                        <span className="flex-1 truncate">{project.name}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleFavorite(project.id)
+                          }}
+                          className="opacity-0 group-hover/project:opacity-100 p-0.5 rounded hover:bg-sidebar-accent transition-opacity"
+                          aria-label="Remove from favorites"
+                        >
+                          <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                        </button>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </SidebarMenuButton>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem onClick={() => toggleFavorite(project.id)}>
+                        <Star className="h-4 w-4 mr-2" />
+                        Remove from favorites
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

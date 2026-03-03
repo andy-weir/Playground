@@ -3,8 +3,11 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   ReactNode,
 } from 'react'
+
+const FAVORITES_STORAGE_KEY = 'feathr-favorite-projects'
 
 export interface Project {
   id: string
@@ -17,6 +20,7 @@ interface NavigationContextValue {
   hoveredSection: string | null
   activeProject: Project | null
   sidebarOpen: boolean
+  favoriteProjectIds: string[]
   setActiveSection: (section: string) => void
   setActiveSubItem: (subItem: string) => void
   setHoveredSection: (section: string | null) => void
@@ -24,6 +28,8 @@ interface NavigationContextValue {
   setActiveProject: (project: Project | null) => void
   exitProject: () => void
   setSidebarOpen: (open: boolean) => void
+  toggleFavorite: (projectId: string) => void
+  isFavorite: (projectId: string) => boolean
 }
 
 const NavigationContext = createContext<NavigationContextValue | undefined>(
@@ -40,6 +46,27 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const [hoveredSection, setHoveredSection] = useState<string | null>(null)
   const [activeProject, setActiveProjectState] = useState<Project | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [favoriteProjectIds, setFavoriteProjectIds] = useState<string[]>(() => {
+    const stored = localStorage.getItem(FAVORITES_STORAGE_KEY)
+    return stored ? JSON.parse(stored) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favoriteProjectIds))
+  }, [favoriteProjectIds])
+
+  const toggleFavorite = useCallback((projectId: string) => {
+    setFavoriteProjectIds((prev) =>
+      prev.includes(projectId)
+        ? prev.filter((id) => id !== projectId)
+        : [...prev, projectId]
+    )
+  }, [])
+
+  const isFavorite = useCallback(
+    (projectId: string) => favoriteProjectIds.includes(projectId),
+    [favoriteProjectIds]
+  )
 
   const navigateTo = useCallback((section: string, subItem: string) => {
     setActiveSection(section)
@@ -70,6 +97,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         hoveredSection,
         activeProject,
         sidebarOpen,
+        favoriteProjectIds,
         setActiveSection,
         setActiveSubItem,
         setHoveredSection,
@@ -77,6 +105,8 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         setActiveProject,
         exitProject,
         setSidebarOpen,
+        toggleFavorite,
+        isFavorite,
       }}
     >
       {children}
