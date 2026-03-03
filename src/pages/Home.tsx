@@ -57,27 +57,55 @@ export default function Home() {
     ? [...projectNavigationItems, projectSettingsItem]
     : allNavigationItems
 
-  // Find current section and sub-item
+  // Find current section
   const currentSection = navigationItems.find((item) => item.id === activeSection)
-  const currentSubItem = currentSection?.children.find((child) => child.id === activeSubItem)
-
-  // Build breadcrumbs
   const sectionTitle = currentSection?.title || 'Dashboard'
-  const subItemTitle = currentSubItem?.title
 
-  const breadcrumbs = activeProject
-    ? [
-        { label: 'Home', href: '#' },
-        { label: activeProject.name, href: '#' },
-        { label: sectionTitle },
-      ]
-    : [
-        { label: 'Home', href: '#' },
-        { label: sectionTitle },
-      ]
+  // Find the active sub-item and its parent (for nested items)
+  let parentItem: { id: string; title: string } | null = null
+  let activeItem: { id: string; title: string } | null = null
 
-  // Page title - for projects page, use section title; otherwise use sub-item title
-  const pageTitle = isProjectsPage ? sectionTitle : (subItemTitle || 'Overview')
+  if (currentSection?.children) {
+    for (const child of currentSection.children) {
+      // Check if this child is the active item
+      if (child.id === activeSubItem) {
+        activeItem = child
+        break
+      }
+      // Check if a nested child is the active item
+      if (child.children) {
+        const nestedChild = child.children.find((nc) => nc.id === activeSubItem)
+        if (nestedChild) {
+          parentItem = child
+          activeItem = nestedChild
+          break
+        }
+      }
+    }
+  }
+
+  // Build breadcrumbs with full hierarchy
+  const buildBreadcrumbs = () => {
+    const crumbs = [{ label: 'Home', href: '#' }]
+
+    if (activeProject) {
+      crumbs.push({ label: activeProject.name, href: '#' })
+    }
+
+    crumbs.push({ label: sectionTitle, href: '#' })
+
+    // Add parent item if we have nested navigation (e.g., People, Super Pixel)
+    if (parentItem) {
+      crumbs.push({ label: parentItem.title, href: '#' })
+    }
+
+    return crumbs
+  }
+
+  const breadcrumbs = buildBreadcrumbs()
+
+  // Page title is the deepest selected item
+  const pageTitle = isProjectsPage ? sectionTitle : (activeItem?.title || 'Overview')
 
   return (
     <div className="flex flex-col gap-6 h-full">
