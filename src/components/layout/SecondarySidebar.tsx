@@ -1,13 +1,12 @@
 import { useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { ChevronsUpDown, Check } from 'lucide-react'
+import { ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useNavigation } from './NavigationContext'
 import {
   allNavigationItems,
   projectNavigationItems,
   projectSettingsItem,
-  sampleProjects,
 } from './navigation'
 import {
   Accordion,
@@ -17,10 +16,9 @@ import {
 } from '@/components/ui/accordion'
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ProjectSwitcher } from './ProjectSwitcher'
 
 const sidebarVariants = {
   hidden: {
@@ -121,20 +119,13 @@ export function SecondarySidebar() {
                       <span className="truncate">{activeProject.name}</span>
                       <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-52">
-                      {sampleProjects.map((project) => (
-                        <DropdownMenuItem
-                          key={project.id}
-                          onClick={() => setActiveProject(project)}
-                          className="flex items-center justify-between"
-                        >
-                          <span>{project.name}</span>
-                          {activeProject.id === project.id && (
-                            <Check className="h-4 w-4" />
-                          )}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
+                    <ProjectSwitcher
+                      onProjectSelect={setActiveProject}
+                      onViewAll={() => {
+                        setActiveProject(null)
+                        navigateTo('projects', '')
+                      }}
+                    />
                   </DropdownMenu>
                 </div>
 

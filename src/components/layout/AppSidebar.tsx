@@ -1,5 +1,5 @@
-import { ChevronUp, ChevronRight, PanelLeftClose, PanelLeft, Moon, Sun, Star } from 'lucide-react'
-import { useState } from 'react'
+import { ChevronUp, ChevronRight, ChevronDown, PanelLeftClose, PanelLeft, Moon, Sun, Star, Plus, Megaphone, FolderKanban, Users2, Heart, Search } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 import {
   Sidebar,
@@ -28,10 +28,12 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { SidebarNavItem } from './SidebarNavItem'
 import { navigationItems, projectsItem, accountsItem, settingsItem, integrationsItem, notificationsItem, resourcesItem, helpItem, sampleProjects } from './navigation'
 import { useNavigation } from './NavigationContext'
 import { WorkspaceSwitcher } from './WorkspaceSwitcher'
+import { CommandPalette } from './CommandPalette'
 
 export function AppSidebar() {
   const { activeProject, setActiveProject, favoriteProjectIds, toggleFavorite, activeWorkspace, setActiveWorkspace } = useNavigation()
@@ -40,6 +42,19 @@ export function AppSidebar() {
   const [isDark, setIsDark] = useState(
     document.documentElement.classList.contains('dark')
   )
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
+  // Keyboard shortcut for command palette (⌘K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setCommandPaletteOpen(true)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const toggleTheme = () => {
     setIsDark(!isDark)
@@ -112,6 +127,59 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        {/* Search & Create */}
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupContent className="flex flex-col gap-2">
+            {/* Search / Command Palette Trigger */}
+            <Button
+              variant="outline"
+              className="w-full justify-between text-muted-foreground font-normal"
+              onClick={() => setCommandPaletteOpen(true)}
+            >
+              <span className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Search...
+              </span>
+              <kbd className="pointer-events-none h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 hidden sm:inline-flex">
+                <span className="text-xs">⌘</span>K
+              </kbd>
+            </Button>
+            {/* Create Button */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Create
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-48"
+                align="start"
+                sideOffset={4}
+              >
+                <DropdownMenuItem className="gap-2">
+                  <Megaphone className="h-4 w-4" />
+                  Create a campaign
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2">
+                  <FolderKanban className="h-4 w-4" />
+                  Create a project
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2">
+                  <Users2 className="h-4 w-4" />
+                  Create a group
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2">
+                  <Heart className="h-4 w-4" />
+                  Create a donation form
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -233,6 +301,10 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
+      <CommandPalette
+        open={commandPaletteOpen}
+        onOpenChange={setCommandPaletteOpen}
+      />
     </Sidebar>
   )
 }
