@@ -27,7 +27,7 @@ import { navigationItems, projectsItem, accountsItem, settingsItem, sampleProjec
 import { useNavigation } from './NavigationContext'
 
 export function AppSidebar() {
-  const { navMode, activeProject, setActiveProject } = useNavigation()
+  const { activeProject, setActiveProject } = useNavigation()
   const { toggleSidebar, state } = useSidebar()
   const [isDark, setIsDark] = useState(
     document.documentElement.classList.contains('dark')
@@ -122,7 +122,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
-                <SidebarNavItem key={`${navMode}-${item.id}`} item={item} />
+                <SidebarNavItem key={item.id} item={item} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -131,7 +131,7 @@ export function AppSidebar() {
         <SidebarGroup className="mt-4 pt-4 border-t border-sidebar-border">
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarNavItem key={`${navMode}-${projectsItem.id}`} item={projectsItem} />
+              <SidebarNavItem key={projectsItem.id} item={projectsItem} />
               {/* Saved Projects List - hidden when collapsed */}
               {sampleProjects.map((project) => {
                 const isActive = activeProject?.id === project.id
@@ -158,7 +158,7 @@ export function AppSidebar() {
         <SidebarGroup className="mt-4 pt-4 border-t border-sidebar-border">
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarNavItem key={`${navMode}-${accountsItem.id}`} item={accountsItem} />
+              <SidebarNavItem key={accountsItem.id} item={accountsItem} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -184,7 +184,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarNavItem key={`${navMode}-settings`} item={settingsItem} />
+          <SidebarNavItem key="settings" item={settingsItem} />
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

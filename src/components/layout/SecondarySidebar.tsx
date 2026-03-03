@@ -43,7 +43,6 @@ const sidebarVariants = {
 
 export function SecondarySidebar() {
   const {
-    navMode,
     activeSection,
     hoveredSection,
     activeSubItem,
@@ -63,9 +62,7 @@ export function SecondarySidebar() {
     }
   }, [])
 
-  // Determine if we should show the sidebar and what type
-  const isValidMode = navMode === 'dual-sidebar' || navMode === 'accordion-sidebar'
-  const isProjectMode = activeProject && navMode === 'accordion-sidebar'
+  const isProjectMode = activeProject !== null
 
   // For workspace mode, check if current section has children
   const navigationItems = activeProject
@@ -77,7 +74,7 @@ export function SecondarySidebar() {
   const hasSecondaryNav = sectionData?.children && sectionData.children.length > 0
 
   // Should we show the sidebar?
-  const shouldShow = isValidMode && (isProjectMode || hasSecondaryNav)
+  const shouldShow = isProjectMode || hasSecondaryNav
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -228,7 +225,7 @@ export function SecondarySidebar() {
                     >
                       {sectionData?.children?.map((child) => {
                         if (child.children && child.children.length > 0) {
-                          const firstChildId = child.children[0].id
+                          const firstChildId = child.children[0]?.id
 
                           return (
                             <AccordionItem
@@ -240,7 +237,7 @@ export function SecondarySidebar() {
                                 className="rounded-md p-2 hover:no-underline hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
                                 onClick={(e) => {
                                   const isChevronClick = (e.target as HTMLElement).closest('[data-accordion-chevron]') !== null
-                                  if (!isChevronClick) {
+                                  if (!isChevronClick && firstChildId) {
                                     navigateTo(displaySection, firstChildId)
                                   }
                                 }}

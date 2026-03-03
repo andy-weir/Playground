@@ -3,11 +3,8 @@ import {
   useContext,
   useState,
   useCallback,
-  useEffect,
   ReactNode,
 } from 'react'
-
-export type NavMode = 'dropdown' | 'dual-sidebar' | 'accordion-sidebar'
 
 export interface Project {
   id: string
@@ -17,13 +14,11 @@ export interface Project {
 interface NavigationContextValue {
   activeSection: string
   activeSubItem: string
-  navMode: NavMode
   hoveredSection: string | null
   activeProject: Project | null
   sidebarOpen: boolean
   setActiveSection: (section: string) => void
   setActiveSubItem: (subItem: string) => void
-  setNavMode: (mode: NavMode) => void
   setHoveredSection: (section: string | null) => void
   navigateTo: (section: string, subItem: string) => void
   setActiveProject: (project: Project | null) => void
@@ -35,8 +30,6 @@ const NavigationContext = createContext<NavigationContextValue | undefined>(
   undefined
 )
 
-const NAV_MODE_STORAGE_KEY = 'feathr-nav-mode'
-
 interface NavigationProviderProps {
   children: ReactNode
 }
@@ -47,15 +40,6 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const [hoveredSection, setHoveredSection] = useState<string | null>(null)
   const [activeProject, setActiveProjectState] = useState<Project | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [navMode, setNavModeState] = useState<NavMode>(() => {
-    const stored = localStorage.getItem(NAV_MODE_STORAGE_KEY)
-    return (stored as NavMode) || 'dual-sidebar'
-  })
-
-  const setNavMode = useCallback((mode: NavMode) => {
-    setNavModeState(mode)
-    localStorage.setItem(NAV_MODE_STORAGE_KEY, mode)
-  }, [])
 
   const navigateTo = useCallback((section: string, subItem: string) => {
     setActiveSection(section)
@@ -78,25 +62,16 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
     setActiveSubItem('overview')
   }, [])
 
-  useEffect(() => {
-    const stored = localStorage.getItem(NAV_MODE_STORAGE_KEY)
-    if (stored && ['dropdown', 'dual-sidebar'].includes(stored)) {
-      setNavModeState(stored as NavMode)
-    }
-  }, [])
-
   return (
     <NavigationContext.Provider
       value={{
         activeSection,
         activeSubItem,
-        navMode,
         hoveredSection,
         activeProject,
         sidebarOpen,
         setActiveSection,
         setActiveSubItem,
-        setNavMode,
         setHoveredSection,
         navigateTo,
         setActiveProject,
