@@ -1,4 +1,4 @@
-import { ChevronUp, ChevronRight, Building2, PanelLeftClose, PanelLeft, Moon, Sun, Star } from 'lucide-react'
+import { ChevronUp, ChevronRight, PanelLeftClose, PanelLeft, Moon, Sun, Star } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -31,9 +31,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { SidebarNavItem } from './SidebarNavItem'
 import { navigationItems, projectsItem, accountsItem, settingsItem, integrationsItem, notificationsItem, resourcesItem, helpItem, sampleProjects } from './navigation'
 import { useNavigation } from './NavigationContext'
+import { WorkspaceSwitcher } from './WorkspaceSwitcher'
 
 export function AppSidebar() {
-  const { activeProject, setActiveProject, favoriteProjectIds, toggleFavorite } = useNavigation()
+  const { activeProject, setActiveProject, favoriteProjectIds, toggleFavorite, activeWorkspace, setActiveWorkspace } = useNavigation()
   const { toggleSidebar, state } = useSidebar()
   const favoriteProjects = sampleProjects.filter((p) => favoriteProjectIds.includes(p.id))
   const [isDark, setIsDark] = useState(
@@ -57,46 +58,28 @@ export function AppSidebar() {
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuButton
                       size="lg"
-                      className="w-full bg-white border border-gray-200 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                      className="w-full bg-background border border-border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                      <Building2 className="size-4" />
+                    <div className="aspect-square size-8 rounded-lg overflow-hidden shrink-0">
+                      <img
+                        src={activeWorkspace.image}
+                        alt={activeWorkspace.name}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <div className="grid w-max text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">Acme Nonprofit</span>
+                      <span className="truncate font-semibold">{activeWorkspace.name}</span>
                       <span className="truncate text-xs text-muted-foreground">
-                        Essential Plan
+                        {activeWorkspace.plan}
                       </span>
                     </div>
                     <ChevronUp className="ml-auto size-4" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                  side="bottom"
-                  align="start"
-                  sideOffset={4}
-                >
-                  <DropdownMenuItem className="gap-2 p-2">
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      <Building2 className="size-4 shrink-0" />
-                    </div>
-                    <span className="font-medium">Acme Nonprofit</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="gap-2 p-2">
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      <Building2 className="size-4 shrink-0" />
-                    </div>
-                    <span>Beta Foundation</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="gap-2 p-2">
-                    <div className="flex size-6 items-center justify-center rounded-sm border bg-background">
-                      <span className="text-xs">+</span>
-                    </div>
-                    <span className="text-muted-foreground">Create workspace</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
+                <WorkspaceSwitcher
+                  activeWorkspace={activeWorkspace}
+                  onWorkspaceChange={setActiveWorkspace}
+                />
                 </DropdownMenu>
               </div>
 
@@ -109,8 +92,12 @@ export function AppSidebar() {
               >
                 {state === 'collapsed' ? (
                   <>
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground group-hover/collapse:hidden">
-                      <Building2 className="size-4" />
+                    <div className="aspect-square size-8 rounded-lg overflow-hidden group-hover/collapse:hidden">
+                      <img
+                        src={activeWorkspace.image}
+                        alt={activeWorkspace.name}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <div className="hidden aspect-square size-8 items-center justify-center group-hover/collapse:flex">
                       <PanelLeft className="size-4" />

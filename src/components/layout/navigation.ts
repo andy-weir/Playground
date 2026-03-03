@@ -278,3 +278,19 @@ export const sampleProjects = [
   { id: 'annual-fundraiser', name: 'Annual Fundraiser' },
   { id: 'q4-campaign', name: 'Q4 Campaign' },
 ]
+
+// Sample workspaces for demo purposes
+export interface Workspace {
+  id: string
+  name: string
+  plan: string
+  image: string
+}
+
+export const sampleWorkspaces: Workspace[] = [
+  { id: 'acme', name: 'Acme Nonprofit', plan: 'Essential Plan', image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=80&h=80&fit=crop' },
+  { id: 'beta', name: 'Beta Foundation', plan: 'Advanced Plan', image: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=80&h=80&fit=crop' },
+  { id: 'charity', name: 'Charity Alliance', plan: 'Feathr Light', image: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=80&h=80&fit=crop' },
+  { id: 'delta', name: 'Delta Community', plan: 'Essential Plan', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=80&h=80&fit=crop' },
+  { id: 'echo', name: 'Echo Education', plan: 'Advanced Plan', image: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=80&h=80&fit=crop' },
+]
