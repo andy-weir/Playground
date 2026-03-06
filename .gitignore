@@ -4,13 +4,13 @@ node_modules/
 # Build output
 dist/
 
-# Logs
-*.log
+# TypeScript build cache
+tsconfig.tsbuildinfo
 
-# Local env files
-.env*.local
+# Vite cache
+.vite/
 
-# Editor directories
+# IDE
 .idea/
 .vscode/
 *.swp
@@ -18,3 +18,13 @@ dist/
 
 # OS files
 .DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
