@@ -35,6 +35,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import CampaignsPage from '@/pages/CampaignsPage'
+import type { CampaignType } from '@/lib/campaignTypes'
 
 import {
   GROUPS,
@@ -175,6 +177,18 @@ function NodeCard({ node, showInternal, onClick }: CardItemProps) {
       )}
     </Card>
   )
+}
+
+// Maps Feathr IA campaign nodes to the CampaignsPage typeFilter.
+// Nodes mapped to undefined render the unfiltered table.
+const CAMPAIGN_TABLE_NODES: Record<string, CampaignType | undefined> = {
+  campaigns: undefined,
+  'campaigns-all': undefined,
+  'campaigns-other': undefined,
+  'campaigns-ads': 'ads',
+  'campaigns-email': 'email',
+  'campaigns-google': 'google-ad-grants',
+  'campaigns-meta': 'meta',
 }
 
 function PseudoContent({ label }: { label: string }) {
@@ -668,7 +682,22 @@ export default function FeathrIA() {
 
               {node.hint && <IANote hint={node.hint} />}
 
-              {visibleChildren.length === 0 ? (
+              {node.id === 'campaigns' && (
+                <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {visibleChildren.map((child) => (
+                    <NodeCard
+                      key={child.id}
+                      node={child}
+                      showInternal={showInternal}
+                      onClick={() => navigate(child.id)}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {node.id in CAMPAIGN_TABLE_NODES ? (
+                <CampaignsPage typeFilter={CAMPAIGN_TABLE_NODES[node.id]} />
+              ) : visibleChildren.length === 0 ? (
                 <PseudoContent label={node.label} />
               ) : (
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
