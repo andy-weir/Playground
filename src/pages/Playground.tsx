@@ -1,5 +1,6 @@
 import { ArrowRight, GitBranch } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { prototypes } from '@/prototypes'
 
 function formatDate(iso: string) {
@@ -22,12 +23,10 @@ export default function Playground() {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <header className="mb-12">
           <h1 className="text-3xl font-semibold tracking-tight">
-            Prototype Playground
+            Feathr Prototype Playground
           </h1>
           <p className="mt-2 text-muted-foreground">
-            A directory of prototypes merged into{' '}
-            <code className="rounded bg-muted px-1.5 py-0.5 text-sm">main</code>
-            . Click any card to open the prototype.
+            A directory of interactive prototypes. Click any card to open.
           </p>
         </header>
 
@@ -50,9 +49,20 @@ export default function Playground() {
             >
               <div className="flex h-full flex-col">
                 <div className="mb-3 flex items-start justify-between gap-3">
-                  <h2 className="text-lg font-semibold leading-tight">
-                    {p.title}
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-semibold leading-tight">
+                      {p.title}
+                    </h2>
+                    {p.mergedAt ? (
+                      <Badge className="border-transparent bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                        Merged
+                      </Badge>
+                    ) : (
+                      <Badge className="border-transparent bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                        In Progress
+                      </Badge>
+                    )}
+                  </div>
                   <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
                 </div>
                 <p className="mb-6 text-sm text-muted-foreground">

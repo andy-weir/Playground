@@ -16,7 +16,7 @@ export function PrototypeFrame({ prototype, children }: PrototypeFrameProps) {
           className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <ChevronLeft className="h-4 w-4" />
-          Playground
+          Feathr Prototype Playground
         </a>
         <div className="h-4 w-px bg-border" />
         <span className="text-sm font-medium">{prototype.title}</span>
