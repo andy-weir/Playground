@@ -49,7 +49,7 @@ function StepPlaceholder({ title, description }: { title: string; description: s
 
 export function CreateCampaignWizard({ open, onOpenChange }: CreateCampaignWizardProps) {
   const [currentStep, setCurrentStep] = useState(0)
-  const { activeProject, activeWorkspace } = useNavigation()
+  const { activeProject } = useNavigation()
 
   const isFirstStep = currentStep === 0
   const isLastStep = currentStep === WIZARD_STEPS.length - 1

@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 import { prototypes } from '@/prototypes'
 
 function formatDate(iso: string) {
-  const [year, month, day] = iso.split('-').map(Number)
+  const [year, month, day] = iso.split('-').map(Number) as [number, number, number]
   const date = new Date(year, month - 1, day)
   return date.toLocaleDateString('en-US', {
     month: 'short',
