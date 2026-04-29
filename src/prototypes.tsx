@@ -5,6 +5,7 @@ import UsabilityConcepts from '@/pages/UsabilityConcepts'
 import FeatureOptIn from '@/pages/FeatureOptIn'
 import GdprConsentDemo from '@/pages/GdprConsentDemo'
 import GdprConsentDemoV2 from '@/pages/GdprConsentDemoV2'
+import FeathrIA from '@/pages/feathr-ia/FeathrIA'
 
 export interface Prototype {
   slug: string
@@ -88,6 +89,16 @@ export const prototypes: Prototype[] = [
         <GdprConsentDemoV2 />
       </AppLayout>
     ),
+  },
+  {
+    slug: 'feathr-ia',
+    title: 'Feathr IA — Proposed',
+    description:
+      'Interactive prototype of the proposed task-based flat IA. Click through the nav to explore depth, scent, and grouping at each level. Includes a tree-test mode for usability testing.',
+    branch: 'aw/feathr-ia-overhaul',
+    createdAt: '2026-04-29',
+    author: 'Andy',
+    render: () => <FeathrIA />,
   },
 ]
 
