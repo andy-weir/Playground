@@ -7,7 +7,9 @@ import { useNavigation } from '@/components/layout/NavigationContext'
 import { allNavigationItems, projectNavigationItems, projectSettingsItem, sampleWorkspaces } from '@/components/layout/navigation'
 import { cn } from '@/lib/utils'
 import CampaignsPage from './CampaignsPage'
+import ContentPage from './ContentPage'
 import type { CampaignType } from '@/lib/campaignTypes'
+import type { ContentTab } from '@/lib/contentTypes'
 
 function EmptyState() {
   return (
@@ -160,6 +162,11 @@ export default function Home() {
   const isAccountsPage = activeSection === 'accounts' && !activeProject
   // Campaigns page
   const isCampaignsPage = activeSection === 'campaigns'
+  // Content page
+  const isContentPage = activeSection === 'content'
+  const contentTab: ContentTab = (['templates', 'creatives', 'forms'].includes(activeSubItem)
+    ? activeSubItem
+    : 'templates') as ContentTab
   // All Campaigns page within a project
   const isProjectCampaignsPage = activeProject && activeSection === 'campaigns' && activeSubItem === 'all'
 
@@ -228,6 +235,7 @@ export default function Home() {
     if (isProjectsPage) return <ProjectsGrid />
     if (isAccountsPage) return <AccountsGrid />
     if (isCampaignsPage) return <CampaignsPage typeFilter={campaignTypeFilter} />
+    if (isContentPage) return <ContentPage activeTab={contentTab} />
     return <EmptyState />
   }
 

@@ -36,7 +36,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import CampaignsPage from '@/pages/CampaignsPage'
+import ContentPage from '@/pages/ContentPage'
 import type { CampaignType } from '@/lib/campaignTypes'
+import type { ContentTab } from '@/lib/contentTypes'
 
 import {
   GROUPS,
@@ -189,6 +191,15 @@ const CAMPAIGN_TABLE_NODES: Record<string, CampaignType | undefined> = {
   'campaigns-email': 'email',
   'campaigns-google': 'google-ad-grants',
   'campaigns-meta': 'meta',
+}
+
+// Maps Feathr IA content nodes to the ContentPage tab.
+const CONTENT_TABLE_NODES: Record<string, ContentTab> = {
+  content: 'templates',
+  'content-templates': 'templates',
+  'content-templates-saved': 'templates',
+  'content-creatives': 'creatives',
+  'content-forms': 'forms',
 }
 
 function PseudoContent({ label }: { label: string }) {
@@ -684,6 +695,8 @@ export default function FeathrIA() {
 
               {node.id in CAMPAIGN_TABLE_NODES ? (
                 <CampaignsPage typeFilter={CAMPAIGN_TABLE_NODES[node.id]} />
+              ) : node.id in CONTENT_TABLE_NODES ? (
+                <ContentPage activeTab={CONTENT_TABLE_NODES[node.id]!} />
               ) : visibleChildren.length === 0 ? (
                 <PseudoContent label={node.label} />
               ) : (

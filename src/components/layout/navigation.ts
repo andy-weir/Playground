@@ -64,6 +64,16 @@ export const navigationItems: NavItem[] = [
     children: [], // No secondary nav for now
   },
   {
+    id: 'content',
+    title: 'Content',
+    icon: FileText,
+    children: [
+      { id: 'templates', title: 'Templates', href: '#' },
+      { id: 'creatives', title: 'Creatives', href: '#' },
+      { id: 'forms', title: 'Forms', href: '#' },
+    ],
+  },
+  {
     id: 'community',
     title: 'Community',
     icon: Users2,
