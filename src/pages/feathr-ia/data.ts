@@ -350,3 +350,150 @@ export function isAncestor(ancestorId: string, descendantId: string): boolean {
   if (!path) return false
   return path.some((n) => n.id === ancestorId)
 }
+
+// ── Tree Test Types & Data ──────────────────────────────────────────
+
+export interface TreeTestTask {
+  id: number
+  prompt: string
+  expectedAnswers: string[]
+  researchQuestion: string
+  category: string
+}
+
+export interface TreeTestAnswer {
+  taskId: number
+  path: string[]
+  nodeId: string
+  pathVisited: string[]
+  startTime: number
+  endTime: number
+  success: boolean
+  direct: boolean
+}
+
+export interface TreeTestSession {
+  participantId: string
+  startedAt: number
+  answers: TreeTestAnswer[]
+  taskOrder: number[]
+}
+
+export const TREE_TEST_TASKS: TreeTestTask[] = [
+  {
+    id: 1,
+    prompt: 'You want to create a new email campaign. Where would you go?',
+    expectedAnswers: ['create-campaign', 'campaigns-email', 'email-campaign-tpl'],
+    researchQuestion: 'Create button + Campaigns/Marketing findability',
+    category: 'Campaign',
+  },
+  {
+    id: 2,
+    prompt: 'You want to see all your currently running ad campaigns. Where would you find them?',
+    expectedAnswers: ['campaigns-ads', 'ad-campaign-tpl'],
+    researchQuestion: 'Campaigns > Ads path',
+    category: 'Campaign',
+  },
+  {
+    id: 3,
+    prompt: 'You want to invite a partner organization to run ads for your cause. Where would you go?',
+    expectedAnswers: ['pm-invites', 'pm-campaigns', 'pm-templates'],
+    researchQuestion: 'RQ1: Partner Marketing vs Campaigns confusion',
+    category: 'Campaign',
+  },
+  {
+    id: 4,
+    prompt: 'A partner wants to sell sponsorships for your event. Where would you set that up?',
+    expectedAnswers: ['pm-monetization', 'pm-monetization-tpl'],
+    researchQuestion: 'RQ1: Monetization findability',
+    category: 'Campaign',
+  },
+  {
+    id: 5,
+    prompt: 'You need to upload a spreadsheet of supporter contacts. Where would you go?',
+    expectedAnswers: ['audience-imports', 'audience-settings'],
+    researchQuestion: 'RQ2: Audience label + Imports path',
+    category: 'Audience',
+  },
+  {
+    id: 6,
+    prompt: 'You want to create a segment of donors who gave more than $100. Where would you go?',
+    expectedAnswers: ['audience-segments', 'segment-tpl'],
+    researchQuestion: 'RQ2: Audience > Segments path',
+    category: 'Audience',
+  },
+  {
+    id: 7,
+    prompt: 'You want to add a custom field to track supporter volunteer status. Where would you go?',
+    expectedAnswers: ['audience-custom-fields', 'pm-custom-fields'],
+    researchQuestion: 'RQ7: Custom Fields location',
+    category: 'Audience',
+  },
+  {
+    id: 8,
+    prompt: 'You want to create a new donation form for your website. Where would you go?',
+    expectedAnswers: ['content-forms', 'donation-form-tpl', 'fundraising'],
+    researchQuestion: 'RQ3: Forms discoverability (critical)',
+    category: 'Forms',
+  },
+  {
+    id: 9,
+    prompt: 'You want to edit an email template you saved previously. Where would you find it?',
+    expectedAnswers: ['content-templates-saved', 'content-templates'],
+    researchQuestion: 'RQ8: Content > Templates path',
+    category: 'Content',
+  },
+  {
+    id: 10,
+    prompt: 'You want to upload new ad creative images. Where would you go?',
+    expectedAnswers: ['content-creatives'],
+    researchQuestion: 'RQ8: Content > Creatives',
+    category: 'Content',
+  },
+  {
+    id: 11,
+    prompt: 'You need to add a new team member to your Feathr account. Where would you go?',
+    expectedAnswers: ['as-users', 'as-permissions'],
+    researchQuestion: 'RQ6: Account Settings > Permissions path',
+    category: 'Settings',
+  },
+  {
+    id: 12,
+    prompt: 'You want to install the Super Pixel tracking code on your website. Where would you go?',
+    expectedAnswers: ['super-pixel-install', 'super-pixel'],
+    researchQuestion: 'RQ5: Audience > Settings > Super Pixel depth',
+    category: 'Settings',
+  },
+  {
+    id: 13,
+    prompt: "You want to update your organization's billing information. Where would you go?",
+    expectedAnswers: ['as-billing', 'as-configurations', 'as-billing-license'],
+    researchQuestion: 'Control task',
+    category: 'Settings',
+  },
+  {
+    id: 14,
+    prompt: 'You want to see how many people visited your website from your campaigns. Where would you go?',
+    expectedAnswers: ['reports-conversions', 'reports-conv-dashboard'],
+    researchQuestion: 'Reports > Conversions path',
+    category: 'Reports',
+  },
+  {
+    id: 15,
+    prompt: 'You want to review the overall engagement of your audience. Where would you go?',
+    expectedAnswers: ['reports-engagement', 'reports'],
+    researchQuestion: 'Reports vs Dashboard',
+    category: 'Reports',
+  },
+]
+
+export function shuffleArray<T>(arr: T[]): T[] {
+  const shuffled = [...arr]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const tmp = shuffled[i] as T
+    shuffled[i] = shuffled[j] as T
+    shuffled[j] = tmp
+  }
+  return shuffled
+}

@@ -1,8 +1,9 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   Bell,
   ChevronRight,
+  Download,
   FileText,
   HelpCircle,
   Info,
@@ -10,7 +11,6 @@ import {
   RotateCcw,
   Search,
   Check,
-  Trash2,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -36,12 +36,17 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
-import { GROUPS, IA, IANode, PATHS, isAncestor } from './data'
-
-interface Answer {
-  path: string[]
-  at: number
-}
+import {
+  GROUPS,
+  IA,
+  IANode,
+  PATHS,
+  TREE_TEST_TASKS,
+  isAncestor,
+  shuffleArray,
+  type TreeTestAnswer,
+  type TreeTestSession,
+} from './data'
 
 interface Settings {
   showInternal: boolean
@@ -225,9 +230,14 @@ function IANote({ hint }: { hint: string }) {
 export default function FeathrIA() {
   const [currentId, setCurrentId] = useState<string>('dashboard')
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
-  const [answers, setAnswers] = useState<Answer[]>([])
-  const [justAddedIdx, setJustAddedIdx] = useState<number>(-1)
   const [createOpen, setCreateOpen] = useState(false)
+
+  // Tree test research state
+  const [session, setSession] = useState<TreeTestSession | null>(null)
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
+  const [participantId, setParticipantId] = useState('')
+  const nodesVisitedRef = useRef<string[]>([])
+  const taskStartRef = useRef<number>(0)
 
   const { showInternal, showGroups, treeMode } = settings
 
@@ -239,27 +249,114 @@ export default function FeathrIA() {
     [node, showInternal]
   )
 
-  const navigate = (id: string) => {
+  const taskOrder = session?.taskOrder ?? []
+  const currentTask = session
+    ? TREE_TEST_TASKS.find((t) => t.id === taskOrder[currentTaskIndex])
+    : null
+  const allTasksDone = session ? currentTaskIndex >= taskOrder.length : false
+  const showNavContent = !treeMode || (session && !allTasksDone)
+
+  const navigate = useCallback((id: string) => {
     if (!PATHS[id]) return
     setCurrentId(id)
+    nodesVisitedRef.current = [...nodesVisitedRef.current, id]
     const main = document.getElementById('feathr-ia-main')
     if (main) main.scrollTop = 0
-  }
+  }, [])
 
-  const recordAnswer = () => {
-    if (!node) return
-    const labels = path.slice(1).map((n) => n.label)
-    const next = [...answers, { path: labels, at: Date.now() }]
-    setAnswers(next)
-    setJustAddedIdx(next.length - 1)
-    window.setTimeout(() => setJustAddedIdx(-1), 1700)
-  }
+  const startSession = useCallback(() => {
+    const order = shuffleArray(TREE_TEST_TASKS.map((t) => t.id))
+    setSession({
+      participantId,
+      startedAt: Date.now(),
+      answers: [],
+      taskOrder: order,
+    })
+    setCurrentTaskIndex(0)
+    setCurrentId('dashboard')
+    nodesVisitedRef.current = ['dashboard']
+    taskStartRef.current = Date.now()
+  }, [participantId])
+
+  const recordAnswer = useCallback(() => {
+    if (!session || !currentTask) return
+    const answerPath = PATHS[currentId]
+    if (!answerPath) return
+
+    const labels = answerPath.slice(1).map((n) => n.label)
+    const isSuccess = currentTask.expectedAnswers.includes(currentId)
+    const isDirect = isSuccess && nodesVisitedRef.current.length <= answerPath.length
+
+    const answer: TreeTestAnswer = {
+      taskId: currentTask.id,
+      path: labels,
+      nodeId: currentId,
+      pathVisited: [...nodesVisitedRef.current],
+      startTime: taskStartRef.current,
+      endTime: Date.now(),
+      success: isSuccess,
+      direct: isDirect,
+    }
+
+    setSession((prev) => {
+      if (!prev) return prev
+      return { ...prev, answers: [...prev.answers, answer] }
+    })
+    setCurrentTaskIndex((prev) => prev + 1)
+    setCurrentId('dashboard')
+    nodesVisitedRef.current = ['dashboard']
+    taskStartRef.current = Date.now()
+  }, [session, currentTask, currentId])
+
+  const exportResults = useCallback(() => {
+    if (!session) return
+    const data = {
+      participantId: session.participantId,
+      startedAt: new Date(session.startedAt).toISOString(),
+      exportedAt: new Date().toISOString(),
+      tasks: session.answers.map((a) => {
+        const task = TREE_TEST_TASKS.find((t) => t.id === a.taskId)
+        return {
+          taskId: a.taskId,
+          prompt: task?.prompt,
+          category: task?.category,
+          researchQuestion: task?.researchQuestion,
+          answeredAt: a.nodeId,
+          pathLabels: a.path,
+          nodesVisited: a.pathVisited,
+          timeMs: a.endTime - a.startTime,
+          success: a.success,
+          direct: a.direct,
+        }
+      }),
+      summary: {
+        totalTasks: session.answers.length,
+        successes: session.answers.filter((a) => a.success).length,
+        directSuccesses: session.answers.filter((a) => a.direct).length,
+        avgTimeMs: session.answers.length
+          ? Math.round(
+              session.answers.reduce((s, a) => s + (a.endTime - a.startTime), 0) /
+                session.answers.length
+            )
+          : 0,
+      },
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `tree-test-${session.participantId}-${Date.now()}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [session])
 
   const reset = () => {
     setCurrentId('dashboard')
     setSettings(DEFAULT_SETTINGS)
-    setAnswers([])
-    setJustAddedIdx(-1)
+    setSession(null)
+    setCurrentTaskIndex(0)
+    setParticipantId('')
+    nodesVisitedRef.current = []
   }
 
   const utilityItems = TOP_NODES.filter((c) => c.section === 'utility').filter((c) =>
@@ -438,24 +535,123 @@ export default function FeathrIA() {
       {/* Main */}
       <main id="feathr-ia-main" className="overflow-y-auto p-6">
         <div className="mx-auto max-w-6xl">
-          {treeMode && (
-            <div className="mb-4 flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
-              <div className="flex-1">
-                <div className="text-sm font-semibold text-primary">
-                  Tree-test mode is on
-                </div>
-                <div className="text-xs text-primary/80">
-                  Navigate to where you'd find your answer, then confirm.
-                </div>
-              </div>
-              <Button onClick={recordAnswer} className="gap-1.5">
-                <Check className="h-4 w-4" />
-                I'd find it here
+          {/* Tree test: participant ID entry */}
+          {treeMode && !session && (
+            <Card className="mx-auto mt-10 max-w-sm p-6 text-center">
+              <h3 className="text-lg font-bold">Tree Test Session</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Enter a participant ID to begin. You'll be shown {TREE_TEST_TASKS.length} tasks in random order.
+              </p>
+              <Input
+                value={participantId}
+                onChange={(e) => setParticipantId(e.target.value)}
+                placeholder="Participant ID (e.g., P01)"
+                className="mt-4"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && participantId.trim()) startSession()
+                }}
+              />
+              <Button
+                onClick={startSession}
+                disabled={!participantId.trim()}
+                className="mt-3 w-full"
+              >
+                Start Session
               </Button>
-            </div>
+            </Card>
           )}
 
-          {node && (
+          {/* Tree test: completion screen */}
+          {treeMode && session && allTasksDone && (
+            <>
+              <Card className="mb-4 border-emerald-200 bg-emerald-50 p-6 text-center dark:border-emerald-900 dark:bg-emerald-950/40">
+                <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-200">
+                  Session Complete
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  All {session.answers.length} tasks recorded for participant{' '}
+                  <strong>{session.participantId}</strong>.
+                </p>
+                <div className="mt-4 flex justify-center gap-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {session.answers.filter((a) => a.success).length}/{session.answers.length}
+                    </div>
+                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Success
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {session.answers.filter((a) => a.direct).length}/{session.answers.length}
+                    </div>
+                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Direct
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {session.answers.length
+                        ? Math.round(
+                            session.answers.reduce(
+                              (s, a) => s + (a.endTime - a.startTime),
+                              0
+                            ) /
+                              session.answers.length /
+                              1000
+                          )
+                        : 0}
+                      s
+                    </div>
+                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Avg Time
+                    </div>
+                  </div>
+                </div>
+                <Button onClick={exportResults} className="mt-4 gap-2">
+                  <Download className="h-4 w-4" />
+                  Download Results (JSON)
+                </Button>
+              </Card>
+
+              {/* Answer log for completed session */}
+              <AnswerLog answers={session.answers} />
+            </>
+          )}
+
+          {/* Tree test: active task banner + prompt */}
+          {treeMode && session && !allTasksDone && currentTask && (
+            <>
+              <div className="mb-4 flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-primary">
+                    Tree-test mode
+                  </div>
+                  <div className="text-xs text-primary/80">
+                    Navigate to where you'd find your answer, then confirm.
+                  </div>
+                </div>
+                <Button onClick={recordAnswer} className="gap-1.5">
+                  <Check className="h-4 w-4" />
+                  I'd find it here
+                </Button>
+              </div>
+              <Card className="mb-4 border-primary/20 p-4">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Task {currentTaskIndex + 1} of {taskOrder.length}
+                </div>
+                <div className="mt-1 text-base font-semibold leading-relaxed">
+                  {currentTask.prompt}
+                </div>
+                <div className="mt-2 text-[11px] text-muted-foreground">
+                  {currentTask.category}
+                </div>
+              </Card>
+            </>
+          )}
+
+          {/* Normal navigation content */}
+          {showNavContent && node && (
             <>
               <div className="mb-4 flex items-center justify-between gap-4">
                 <div>
@@ -501,52 +697,11 @@ export default function FeathrIA() {
                 )}
               </div>
 
-              {treeMode && (
-                <Card className="mt-4 p-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Recorded answers {answers.length > 0 && `(${answers.length})`}
-                    </h4>
-                    {answers.length > 0 && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 gap-1 px-2 text-[11px]"
-                        onClick={() => {
-                          setAnswers([])
-                          setJustAddedIdx(-1)
-                        }}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                        Clear
-                      </Button>
-                    )}
-                  </div>
-                  {answers.length === 0 ? (
-                    <p className="text-xs italic text-muted-foreground">
-                      No answers recorded yet. Navigate and click "I'd find it here" to log a path.
-                    </p>
-                  ) : (
-                    <div className="space-y-1">
-                      {answers.map((a, i) => (
-                        <div
-                          key={a.at}
-                          className={cn(
-                            'flex items-center gap-2 rounded-md px-2 py-1.5 font-mono text-xs transition-colors',
-                            i === justAddedIdx
-                              ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
-                              : 'bg-muted text-foreground'
-                          )}
-                        >
-                          <span className="font-semibold text-muted-foreground">
-                            {i + 1}.
-                          </span>
-                          <span>{a.path.join(' › ')}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </Card>
+              {/* In-progress answer log during active session */}
+              {treeMode && session && !allTasksDone && session.answers.length > 0 && (
+                <div className="mt-4">
+                  <AnswerLog answers={session.answers} />
+                </div>
               )}
             </>
           )}
@@ -580,7 +735,15 @@ export default function FeathrIA() {
           <input
             type="checkbox"
             checked={treeMode}
-            onChange={(e) => setSettings((s) => ({ ...s, treeMode: e.target.checked }))}
+            onChange={(e) => {
+              setSettings((s) => ({ ...s, treeMode: e.target.checked }))
+              if (!e.target.checked) {
+                setSession(null)
+                setCurrentTaskIndex(0)
+                setParticipantId('')
+                nodesVisitedRef.current = []
+              }
+            }}
             className="h-4 w-4 cursor-pointer accent-primary"
           />
           Tree-test mode
@@ -590,10 +753,41 @@ export default function FeathrIA() {
           Reset prototype
         </Button>
         <p className="text-[11px] leading-snug text-muted-foreground">
-          In tree-test mode, navigate to where you'd find the answer, then click{' '}
-          <strong>Confirm</strong>. Recorded answers appear on the page.
+          In tree-test mode, enter a participant ID, complete {TREE_TEST_TASKS.length} tasks, then
+          export results as JSON for synthesis.
         </p>
       </Card>
     </div>
+  )
+}
+
+function AnswerLog({ answers }: { answers: TreeTestAnswer[] }) {
+  return (
+    <Card className="p-4">
+      <h4 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        Recorded answers ({answers.length})
+      </h4>
+      <div className="space-y-1">
+        {answers.map((a, i) => {
+          return (
+            <div
+              key={`${a.taskId}-${a.endTime}`}
+              className={cn(
+                'flex items-center gap-2 rounded-md px-2 py-1.5 font-mono text-xs',
+                a.success
+                  ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
+                  : 'bg-destructive/10 text-destructive'
+              )}
+            >
+              <span className="font-semibold text-muted-foreground">{i + 1}.</span>
+              <span className="flex-1 truncate">{a.path.join(' > ')}</span>
+              <span className="ml-auto text-[11px] font-semibold">
+                {a.success ? (a.direct ? 'Direct' : 'Indirect') : 'Fail'}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </Card>
   )
 }
