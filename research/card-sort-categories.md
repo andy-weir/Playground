@@ -15,7 +15,7 @@ Cards for the open card sort study. Each card represents a leaf-level feature or
 | 7 | Email Campaigns | Campaigns > Email |
 | 8 | Google Ads Campaigns | Campaigns > Google |
 | 9 | Meta Campaigns | Campaigns > Meta |
-| 10 | Campaign Flights | Campaigns > Flights |
+| 10 | Campaign Flights | Campaigns > Projects > {{ project }} > Overview |
 | 11 | Campaign Projects | Campaigns > Projects |
 | 12 | Campaign Settings (Domains, Conversions, etc.) | Campaigns > Settings |
 | 13 | Partner Invites | Partner Marketing > Invites |

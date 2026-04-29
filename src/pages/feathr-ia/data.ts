@@ -53,6 +53,7 @@ export const IA: IANode = {
       label: 'Campaigns / Marketing',
       icon: Megaphone,
       section: 'programs',
+      hint: 'Crit identified account-level campaign management (outside projects) as a critical dev area. Needs spec from PM before prototyping.',
       children: [
         { id: 'campaigns-all', label: 'All', children: [{ id: 'campaign-tpl', label: '{{ campaign }}', type: 'template' }] },
         { id: 'campaigns-ads', label: 'Ads', children: [{ id: 'ad-campaign-tpl', label: '{{ ad campaign }}', type: 'template' }] },
@@ -78,33 +79,19 @@ export const IA: IANode = {
           children: [{ id: 'other-campaign-tpl', label: '{{ other campaign }}', type: 'template' }],
         },
         {
-          id: 'campaigns-flights',
-          label: 'Flights',
-          children: [
-            {
-              id: 'flight-tpl',
-              label: '{{ flight }}',
-              type: 'template',
-              children: [
-                { id: 'flight-overview', label: 'Overview', type: 'leaf' },
-                { id: 'flight-report', label: 'Report', type: 'leaf' },
-              ],
-            },
-          ],
-        },
-        {
           id: 'campaigns-projects',
           label: 'Projects',
-          hint: "Projects are an optional folder, not required. Campaigns can stand alone or be grouped. Test whether 'optional' reads as nav-only vs. concept.",
+          hint: "Projects absorb Flights as the single organizational container. Campaigns can stand alone or be grouped into Projects. Flights' funnel view becomes the Project Overview.",
           children: [
             {
               id: 'project-tpl',
               label: '{{ project }}',
               type: 'template',
               children: [
-                { id: 'project-information', label: 'Information', type: 'leaf' },
-                { id: 'project-billing', label: 'Billing', type: 'leaf' },
+                { id: 'project-overview', label: 'Overview', type: 'leaf' },
+                { id: 'project-campaigns', label: 'Campaigns', type: 'leaf' },
                 { id: 'project-report', label: 'Report', type: 'leaf' },
+                { id: 'project-billing', label: 'Billing', type: 'leaf' },
               ],
             },
           ],
@@ -213,6 +200,7 @@ export const IA: IANode = {
       label: 'Content',
       icon: FileText,
       section: 'library',
+      hint: 'Crit identified account-level content management as a critical dev area. Workflows (create/edit/delete templates, ads, forms) need spec from PM before prototyping.',
       children: [
         { id: 'content-creatives', label: 'Creatives', type: 'leaf' },
         {
