@@ -682,19 +682,6 @@ export default function FeathrIA() {
 
               {node.hint && <IANote hint={node.hint} />}
 
-              {node.id === 'campaigns' && (
-                <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {visibleChildren.map((child) => (
-                    <NodeCard
-                      key={child.id}
-                      node={child}
-                      showInternal={showInternal}
-                      onClick={() => navigate(child.id)}
-                    />
-                  ))}
-                </div>
-              )}
-
               {node.id in CAMPAIGN_TABLE_NODES ? (
                 <CampaignsPage typeFilter={CAMPAIGN_TABLE_NODES[node.id]} />
               ) : visibleChildren.length === 0 ? (
