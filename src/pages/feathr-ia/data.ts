@@ -56,7 +56,19 @@ export const IA: IANode = {
       children: [
         { id: 'campaigns-all', label: 'All', children: [{ id: 'campaign-tpl', label: '{{ campaign }}', type: 'template' }] },
         { id: 'campaigns-ads', label: 'Ads', children: [{ id: 'ad-campaign-tpl', label: '{{ ad campaign }}', type: 'template' }] },
-        { id: 'campaigns-email', label: 'Email', children: [{ id: 'email-campaign-tpl', label: '{{ email campaign }}', type: 'template' }] },
+        {
+          id: 'campaigns-email',
+          label: 'Email',
+          children: [
+            { id: 'email-campaign-tpl', label: '{{ email campaign }}', type: 'template' },
+            {
+              id: 'email-subscriptions',
+              label: 'Subscriptions',
+              type: 'leaf',
+              hint: 'This is unsubscribe-page settings — currently lives under Account Settings > General. Test whether users find it here vs. there.',
+            },
+          ],
+        },
         { id: 'campaigns-google', label: 'Google', children: [{ id: 'google-campaign-tpl', label: '{{ google ads campaign }}', type: 'template' }] },
         { id: 'campaigns-meta', label: 'Meta', children: [{ id: 'meta-campaign-tpl', label: '{{ meta campaign }}', type: 'template' }] },
         {
@@ -83,6 +95,7 @@ export const IA: IANode = {
         {
           id: 'campaigns-projects',
           label: 'Projects',
+          hint: "Projects are an optional folder, not required. Campaigns can stand alone or be grouped. Test whether 'optional' reads as nav-only vs. concept.",
           children: [
             {
               id: 'project-tpl',
@@ -256,14 +269,29 @@ export const IA: IANode = {
             { id: 'as-email-campaigns', label: 'Email & Campaigns', type: 'leaf', internal: true },
             { id: 'as-beefree', label: 'BeeFree Editor', type: 'leaf', internal: true },
             { id: 'as-flags', label: 'Flags', type: 'leaf', internal: true },
-            { id: 'as-domains', label: 'Domains', type: 'leaf' },
+            {
+              id: 'as-domains',
+              label: 'Domains',
+              type: 'leaf',
+              hint: 'Domain settings are project-scoped today (used by landing pages, invites, forms). Unclear how this works when projects become optional.',
+            },
             { id: 'as-domain-allow', label: 'Domain Allow List', type: 'leaf' },
             { id: 'as-conversions', label: 'Conversions', type: 'leaf' },
             { id: 'as-ip-filtering', label: 'IP Filtering', type: 'leaf' },
             { id: 'as-geofilters', label: 'Geofilters', type: 'leaf' },
             { id: 'as-advertisers', label: 'Advertisers', type: 'leaf' },
-            { id: 'as-sender-emails', label: 'Sender Email Addresses', type: 'leaf' },
-            { id: 'as-subscriptions', label: 'Subscriptions', type: 'leaf' },
+            {
+              id: 'as-sender-emails',
+              label: 'Sender Email Addresses',
+              type: 'leaf',
+              hint: 'Bouncing here from Email feels disjointed (internal feedback). Test whether users expect this under Email instead.',
+            },
+            {
+              id: 'as-subscriptions',
+              label: 'Subscriptions',
+              type: 'leaf',
+              hint: 'Same concept as Email > Subscriptions in the proposal — duplicate during migration. Test which location wins.',
+            },
           ],
         },
         {
@@ -484,6 +512,27 @@ export const TREE_TEST_TASKS: TreeTestTask[] = [
     expectedAnswers: ['reports-engagement', 'reports'],
     researchQuestion: 'Reports vs Dashboard',
     category: 'Reports',
+  },
+  {
+    id: 16,
+    prompt: 'You want to manage the unsubscribe page settings for your supporter emails. Where would you go?',
+    expectedAnswers: ['email-subscriptions', 'as-subscriptions'],
+    researchQuestion: 'RQ11: Subscriptions label conflict (Email vs Account Settings)',
+    category: 'Settings',
+  },
+  {
+    id: 17,
+    prompt: 'You need to configure the sender email address used for an outgoing campaign email. Where would you go?',
+    expectedAnswers: ['as-sender-emails'],
+    researchQuestion: 'RQ6: Sender Email Address proximity to Email',
+    category: 'Settings',
+  },
+  {
+    id: 18,
+    prompt: 'You want to update the domain settings for a landing page. Where would you go?',
+    expectedAnswers: ['as-domains'],
+    researchQuestion: 'RQ12: Domain settings location with optional projects',
+    category: 'Settings',
   },
 ]
 

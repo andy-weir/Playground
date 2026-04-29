@@ -30,6 +30,15 @@ Validate the proposed "Task Based Flat" information architecture through structu
 9. **Quick Start persistence** — Is a persistent Quick Start nav item useful beyond onboarding, or dead space?
 10. **Account Settings > General sprawl** — The General sub-section still has 16 items. Is this too many?
 
+### Added from internal UX feedback (2026-04-29)
+
+See [synthesis/2026-04-29-internal-ux-feedback.md](synthesis/2026-04-29-internal-ux-feedback.md) for source quotes.
+
+11. **Subscriptions label conflict (Critical)** — The proposal adds "Subscriptions" under Email, but Account Settings > General > Subscriptions already exists for unsubscribe-page settings. Do users distinguish them, or does the duplication confuse them? *(Source: Stephanie)*
+12. **Domain settings location (Critical)** — Domain settings are project-scoped today and used by landing pages, invites, and forms. Where do users expect to manage domains when projects become optional — account-level, campaign-level, or hybrid? *(Source: Stephanie)*
+13. **Projects-optional comprehension (Important)** — Do users grasp "projects are optional" as a concept (campaigns can stand alone) or only as a navigation choice? *(Source: Chandler)*
+14. **Migration discoverability (Important)** — How discoverable is the new structure for existing users without migration prompts or in-app onboarding? *(Source: Calvin)*
+
 ## Methods
 
 ### Week 1-2: Open Card Sort + Stakeholder Interviews
@@ -47,7 +56,7 @@ Validate the proposed "Task Based Flat" information architecture through structu
 
 **Tree testing** — Using prototype's built-in tree-test mode
 - 8-10 internal staff (CS, marketing, sales — not product/design)
-- 15 findability tasks (see [tree-test-tasks.md](tree-test-tasks.md))
+- 18 findability tasks (see [tree-test-tasks.md](tree-test-tasks.md))
 - Metrics: success rate, directness, time on task, first-click accuracy
 
 ### Week 5-6: External User Testing

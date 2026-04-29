@@ -1,6 +1,6 @@
 # Tree Test Task Scenarios
 
-15 findability tasks for the Feathr IA tree test. Each task targets one or more research questions (RQ) from the research plan. Tasks are presented in random order per session via the prototype's built-in randomization.
+18 findability tasks for the Feathr IA tree test. Each task targets one or more research questions (RQ) from the research plan. Tasks are presented in random order per session via the prototype's built-in randomization.
 
 ## Campaign Tasks
 
@@ -86,3 +86,22 @@
 **Prompt:** "You want to review the overall engagement of your audience. Where would you go?"
 **Expected answers:** `reports-engagement`, `reports`
 **Tests:** Reports vs Dashboard disambiguation
+
+## Tasks added from internal UX feedback (2026-04-29)
+
+See [synthesis/2026-04-29-internal-ux-feedback.md](synthesis/2026-04-29-internal-ux-feedback.md).
+
+### Task 16: Manage unsubscribe page settings (RQ11)
+**Prompt:** "You want to manage the unsubscribe page settings for your supporter emails. Where would you go?"
+**Expected answers:** `email-subscriptions`, `as-subscriptions`
+**Tests:** Subscriptions label conflict — does Email > Subscriptions read as the unsubscribe-page settings, or do users still go to Account Settings > General? Both locations are accepted as success during the migration window; observe which wins.
+
+### Task 17: Configure sender email address (RQ6)
+**Prompt:** "You need to configure the sender email address used for an outgoing campaign email. Where would you go?"
+**Expected answers:** `as-sender-emails`
+**Tests:** Whether burying Sender Email Addresses under Account Settings > General is acceptable, or whether users expect this near Email. Stephanie's specific complaint about feeling disjointed.
+
+### Task 18: Update domain settings for a landing page (RQ12)
+**Prompt:** "You want to update the domain settings for a landing page. Where would you go?"
+**Expected answers:** `as-domains`
+**Tests:** Domain settings location when projects are optional. Observe whether users wander into Campaigns/Marketing or Content first (mirroring today's project-scoped behavior).
