@@ -87,24 +87,23 @@ function CampaignRow({ campaign, isFlightChild = false, columns }: {
   return (
     <tr className={cn('border-b border-border/50 hover:bg-muted/50 transition-colors', isFlightChild && 'bg-muted/20')}>
       {columns.map((col) => {
-        if (col.id === 'type') {
+        if (col.id === 'name') {
           return (
             <td key={col.id} className="px-4 py-3">
-              <div className="flex items-center">
-                {/* Spacer matching chevron width so all pills align with flight rows */}
-                <div className="w-6 shrink-0" />
-                <CampaignTypePill type={campaign.type} size="sm" />
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 shrink-0" />
+                <div>
+                  <span className="font-medium text-sm">{campaign.name}</span>
+                  <span className="block text-xs text-muted-foreground">{getProjectName(campaign.projectId)}</span>
+                </div>
               </div>
             </td>
           )
         }
-        if (col.id === 'name') {
+        if (col.id === 'type') {
           return (
             <td key={col.id} className="px-4 py-3">
-              <div>
-                <span className="font-medium text-sm">{campaign.name}</span>
-                <span className="block text-xs text-muted-foreground">{getProjectName(campaign.projectId)}</span>
-              </div>
+              <CampaignTypePill type={campaign.type} size="sm" />
             </td>
           )
         }
@@ -145,27 +144,27 @@ function FlightRow({ flight, columns }: { flight: Flight; columns: ColumnDef[] }
         onClick={() => setExpanded(!expanded)}
       >
         {columns.map((col) => {
-          if (col.id === 'type') {
+          if (col.id === 'name') {
             return (
               <td key={col.id} className="px-4 py-3">
                 <div className="flex items-center gap-1.5">
                   <ChevronRight
                     className={cn('h-4 w-4 shrink-0 text-muted-foreground transition-transform', expanded && 'rotate-90')}
                   />
-                  <CampaignTypePill type="flight" size="sm" />
+                  <div>
+                    <span className="font-medium text-sm">{flight.name}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {getProjectName(flight.projectId)} · {childCampaigns.length} campaigns
+                    </span>
+                  </div>
                 </div>
               </td>
             )
           }
-          if (col.id === 'name') {
+          if (col.id === 'type') {
             return (
               <td key={col.id} className="px-4 py-3">
-                <div>
-                  <span className="font-medium text-sm">{flight.name}</span>
-                  <span className="block text-xs text-muted-foreground">
-                    {getProjectName(flight.projectId)} · {childCampaigns.length} campaigns
-                  </span>
-                </div>
+                <CampaignTypePill type="flight" size="sm" />
               </td>
             )
           }

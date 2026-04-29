@@ -8,8 +8,8 @@ export interface ColumnDef {
 
 // All possible columns
 export const allColumns: ColumnDef[] = [
-  { id: 'type', label: 'Type', width: 'w-[170px]' },
   { id: 'name', label: 'Name' },
+  { id: 'type', label: 'Type', width: 'w-[170px]' },
   { id: 'status', label: 'Status', width: 'w-[110px]' },
   { id: 'createdDate', label: 'Created', width: 'w-[100px]' },
   { id: 'startDate', label: 'Start', width: 'w-[100px]' },
@@ -60,13 +60,13 @@ function resolveViewContext(subItem: string | undefined): ViewContext {
 
 // Default visible columns per view
 const defaultColumnsMap: Record<string, string[]> = {
-  all: ['type', 'name', 'status', 'createdDate', 'startDate', 'endDate', 'views', 'clicks'],
-  ads: ['type', 'name', 'status', 'createdDate', 'startDate', 'endDate', 'spend', 'budget', 'views', 'clicks', 'conversions', 'conversionValue'],
-  email: ['type', 'name', 'status'],
-  monetization: ['type', 'name', 'status'],
-  'google-ad-grants': ['type', 'name', 'status', 'createdDate', 'startDate', 'endDate', 'spend', 'budget', 'views', 'clicks', 'conversions', 'conversionValue'],
-  meta: ['type', 'name', 'status', 'createdDate', 'startDate', 'endDate', 'spend', 'budget', 'views', 'clicks', 'conversions', 'conversionValue'],
-  other: ['type', 'name', 'status'],
+  all: ['name', 'type', 'status', 'createdDate', 'startDate', 'endDate', 'views', 'clicks'],
+  ads: ['name', 'type', 'status', 'createdDate', 'startDate', 'endDate', 'spend', 'budget', 'views', 'clicks', 'conversions', 'conversionValue'],
+  email: ['name', 'type', 'status'],
+  monetization: ['name', 'type', 'status'],
+  'google-ad-grants': ['name', 'type', 'status', 'createdDate', 'startDate', 'endDate', 'spend', 'budget', 'views', 'clicks', 'conversions', 'conversionValue'],
+  meta: ['name', 'type', 'status', 'createdDate', 'startDate', 'endDate', 'spend', 'budget', 'views', 'clicks', 'conversions', 'conversionValue'],
+  other: ['name', 'type', 'status'],
 }
 
 // Hidden columns available per view (can be toggled on)
