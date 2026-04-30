@@ -4,7 +4,6 @@ import Home from '@/pages/Home'
 import UsabilityConcepts from '@/pages/UsabilityConcepts'
 import FeatureOptIn from '@/pages/FeatureOptIn'
 import GdprConsentDemo from '@/pages/GdprConsentDemo'
-import GdprConsentDemoV2 from '@/pages/GdprConsentDemoV2'
 import FeathrIA from '@/pages/feathr-ia/FeathrIA'
 
 export interface Prototype {
@@ -73,20 +72,6 @@ export const prototypes: Prototype[] = [
     render: () => (
       <AppLayout>
         <GdprConsentDemo />
-      </AppLayout>
-    ),
-  },
-  {
-    slug: 'gdpr-email-consent-v2',
-    title: 'GDPR Email Consent v2',
-    description:
-      'Iteration on the GDPR email consent prototype. Duplicated from v1 as a starting point — ready to evolve with new ideas.',
-    branch: 'aw/gdpr-email-consent-v2',
-    createdAt: '2026-04-28',
-    author: 'Andy',
-    render: () => (
-      <AppLayout>
-        <GdprConsentDemoV2 />
       </AppLayout>
     ),
   },
